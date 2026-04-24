@@ -1,5 +1,6 @@
 package com.commerceapp.admin.service;
 
+import com.commerceapp.admin.dto.AdminDetailResponse;
 import com.commerceapp.admin.dto.AdminSignupRequest;
 import com.commerceapp.admin.entity.Admin;
 import com.commerceapp.admin.repository.AdminRepository;
@@ -30,6 +31,15 @@ public class AdminService {
                 request.getRole()
         );
         adminRepository.save(admin);
+    }
+
+    @Transactional(readOnly = true)
+    public AdminDetailResponse getAdminDetail(Long adminId){
+        Admin admin = adminRepository.findById(adminId).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
+        );
+        return AdminDetailResponse.from(admin);
+
     }
 
 }
