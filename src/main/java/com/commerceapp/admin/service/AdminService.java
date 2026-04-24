@@ -2,6 +2,7 @@ package com.commerceapp.admin.service;
 
 import com.commerceapp.admin.dto.AdminDetailResponse;
 import com.commerceapp.admin.dto.AdminSignupRequest;
+import com.commerceapp.admin.dto.AdminUpdateRequest;
 import com.commerceapp.admin.entity.Admin;
 import com.commerceapp.admin.repository.AdminRepository;
 import com.commerceapp.common.config.PasswordEncoder;
@@ -39,6 +40,23 @@ public class AdminService {
                 () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
         );
         return AdminDetailResponse.from(admin);
+
+    }
+
+    @Transactional
+    public void adminUpdate(Long adminId, AdminUpdateRequest request){
+        Admin admin = adminRepository.findById(adminId).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
+        );
+        if (adminRepository.existsByEmail(request.getEmail())){
+            throw new IllegalArgumentException("이미 사용중인 이메일입니다.");
+        }
+        admin.update(
+                request.getName(),
+                request.getEmail(),
+                request.getPhoneNumber()
+        );
+        Admin updateAdmin = adminRepository.save(admin);
 
     }
 

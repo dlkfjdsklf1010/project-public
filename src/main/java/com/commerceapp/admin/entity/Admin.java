@@ -50,6 +50,12 @@ public class Admin extends BaseEntity {
         this.isDeleted = false;
     }
 
+    public void update(String name, String email, String phoneNumber){
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
+
     public void activate(LocalDateTime currentTime) {
         this.status = "활성";
         this.approvedAt = currentTime;

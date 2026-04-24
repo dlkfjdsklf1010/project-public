@@ -2,6 +2,7 @@ package com.commerceapp.admin.controller;
 
 import com.commerceapp.admin.dto.AdminDetailResponse;
 import com.commerceapp.admin.dto.AdminSignupRequest;
+import com.commerceapp.admin.dto.AdminUpdateRequest;
 import com.commerceapp.admin.service.AdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,4 +33,11 @@ public class AdminController {
         return  ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PatchMapping("/{adminId}")
+    public ResponseEntity<String> updateAdmin(@PathVariable Long adminId,@Valid @RequestBody AdminUpdateRequest request){
+
+        adminService.adminUpdate(adminId, request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("관리자 정보 수정이 완료되었습니다.");
+    }
 }
