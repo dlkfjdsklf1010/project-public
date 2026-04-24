@@ -1,5 +1,6 @@
 package com.commerceapp.admin.entity;
 
+import com.commerceapp.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.AccessLevel;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "admins")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Admin {
+public class Admin extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +40,7 @@ public class Admin {
     @Column(nullable = false)
     private Boolean isDeleted;
 
-    public Admin(String name, String email, String password, String phoneNumber, String role, String status){
+    public Admin(String name, String email, String password, String phoneNumber, String role){
         this.name = name;
         this.email = email;
         this.password = password;
@@ -49,7 +50,7 @@ public class Admin {
         this.isDeleted = false;
     }
 
-    public void activate() {
+    public void activate(LocalDateTime currentTime) {
         this.status = "활성";
         this.approvedAt = currentTime;
     }
@@ -62,10 +63,10 @@ public class Admin {
         this.status = "정지";
     }
 
-    public void reject() {
+    public void reject(String reason, LocalDateTime currentTime) {
         this.status = "거부";
-        this.rejectedAt = currentTime;
         this.rejectReason = reason;
+        this.rejectedAt = currentTime;
     }
 
 
