@@ -14,11 +14,11 @@ public enum AdminStatus {
     DEACTIVATE("비활성","계정 비활성화됨");
 
     private final String databaseValue;
-    private final String errorMessage;
+    private final String message;
 
-    AdminStatus(String databaseValue, String errorMessage) {
+    AdminStatus(String databaseValue, String message) {
         this.databaseValue = databaseValue;
-        this.errorMessage = errorMessage;
+        this.message = message;
     }
 
     public static AdminStatus from(String databaseValue){
