@@ -1,7 +1,6 @@
 package com.commerceapp.admin.controller;
 
 import com.commerceapp.admin.dto.*;
-import com.commerceapp.admin.entity.Admin;
 import com.commerceapp.admin.service.AdminService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
