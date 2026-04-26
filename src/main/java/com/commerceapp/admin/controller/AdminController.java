@@ -54,14 +54,24 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body("관리자 정보 수정이 완료되었습니다.");
     }
 
-    @PatchMapping("/{adminId}")
+    @PatchMapping("/changerole/{adminId}")
     public ResponseEntity<String> changeAdminRole(
             @PathVariable Long adminId,
             @Valid @RequestBody AdminRoleUpdateRequest request){
 
         adminService.changeAdminRole(adminId, request);
 
-         return ResponseEntity.status(HttpStatus.OK).body("관리자 정보 수정이 완료되었습니다.");
+         return ResponseEntity.status(HttpStatus.OK).body("관리자 역할 변경이 완료되었습니다.");
+    }
+
+    @PatchMapping("/changestatus/{adminId}")
+    public ResponseEntity<String> changeAdminStatus(
+            @PathVariable Long adminId,
+            @Valid @RequestBody AdminStatusUpdateRequest request){
+
+        adminService.changeAdminStatus(adminId, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body("관리자 상태 변경이 완료되었습니다.");
     }
 
 }

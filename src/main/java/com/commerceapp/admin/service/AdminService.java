@@ -2,6 +2,7 @@ package com.commerceapp.admin.service;
 
 import com.commerceapp.admin.dto.*;
 import com.commerceapp.admin.entity.Admin;
+import com.commerceapp.admin.enums.AdminRole;
 import com.commerceapp.admin.enums.AdminStatus;
 import com.commerceapp.admin.repository.AdminRepository;
 import com.commerceapp.common.config.PasswordEncoder;
@@ -45,7 +46,7 @@ public class AdminService {
 
         AdminStatus status = AdminStatus.from(admin.getStatus());
         if (!status.isLogin()) {
-            throw new IllegalStateException(status.getErrorMessage());
+            throw new IllegalStateException(status.getMessage());
         }
 
         return AdminLoginSession.from(admin);
@@ -82,7 +83,21 @@ public class AdminService {
                 () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
         );
 
-        admin.changeRole(request.getRole());
+        admin.changeRole(request.getRole().getDatabaseValue());
+    }
+
+    @Transactional
+    public void changeAdminStatus(Long adminId, AdminStatusUpdateRequest request){
+        Admin admin = adminRepository.findById(adminId).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
+        );
+        if (request.getStatus() == AdminStatus.BANNED){
+            admin.ban();
+        } else if (request.getStatus() == AdminStatus.DEACTIVATE){
+            admin.deactivate();
+        } else {
+            throw new IllegalArgumentException("잘못된 상태 변경 요청입니다.");
+        }
     }
 
 }
