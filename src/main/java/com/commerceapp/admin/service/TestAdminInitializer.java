@@ -25,13 +25,16 @@ public class TestAdminInitializer {
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void initTestAdmins() {
-        log.info("슈퍼관리자 기능 테스트용 운영 관리자 계정 10개 생성을 시작합니다.");
+        // 기존 10개에서 5개 생성으로 변경
+        log.info("슈퍼관리자 기능 테스트용 운영 관리자 계정 5개 생성을 시작합니다.");
 
         String encodedPassword = passwordEncoder.encode("12345678");
+        LocalDateTime now = LocalDateTime.now();
 
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 5; i++) {
             String email = "testadmin" + i + "@gmail.com";
 
+            // 생성 시점의 기본 상태는 "승인대기(PENDING)"로 설정됨
             Admin testAdmin = new Admin(
                     "테스트관리자" + i,
                     email,
@@ -40,17 +43,33 @@ public class TestAdminInitializer {
                     "운영"
             );
 
-
-            if (i <= 2) {
-                testAdmin.activate(LocalDateTime.now());
-                log.debug("활성 상태 계정 세팅: {}", email);
-            } else {
-                log.debug("승인 대기 상태 계정 세팅: {}", email);
+            // i 값에 따라 각기 다른 상태로 전이 (State Transition)
+            switch (i) {
+                case 1:
+                    testAdmin.activate(now);
+                    log.debug("활성 상태 계정 세팅: {}", email);
+                    break;
+                case 2:
+                    // 생성 기본값이 승인대기이므로 아무 작업도 하지 않음
+                    log.debug("승인대기 상태 계정 세팅: {}", email);
+                    break;
+                case 3:
+                    testAdmin.reject("테스트용 거부 사유입니다.", now);
+                    log.debug("거부 상태 계정 세팅: {}", email);
+                    break;
+                case 4:
+                    testAdmin.ban();
+                    log.debug("정지 상태 계정 세팅: {}", email);
+                    break;
+                case 5:
+                    testAdmin.deactivate();
+                    log.debug("비활성 상태 계정 세팅: {}", email);
+                    break;
             }
 
             adminRepository.save(testAdmin);
         }
 
-        log.info("테스트용 운영 관리자 계정 생성 완료 (활성: 2, 승인대기: 8)");
+        log.info("테스트용 운영 관리자 계정 생성 완료 (활성:1, 승인대기:1, 거부:1, 정지:1, 비활성:1)");
     }
 }

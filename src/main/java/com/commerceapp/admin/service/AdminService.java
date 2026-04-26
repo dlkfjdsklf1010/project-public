@@ -1,9 +1,8 @@
 package com.commerceapp.admin.service;
 
-import com.commerceapp.admin.dto.AdminDetailResponse;
-import com.commerceapp.admin.dto.AdminSignupRequest;
-import com.commerceapp.admin.dto.AdminUpdateRequest;
+import com.commerceapp.admin.dto.*;
 import com.commerceapp.admin.entity.Admin;
+import com.commerceapp.admin.enums.AdminStatus;
 import com.commerceapp.admin.repository.AdminRepository;
 import com.commerceapp.common.config.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +31,24 @@ public class AdminService {
                 request.getRole()
         );
         adminRepository.save(admin);
+    }
+
+    @Transactional(readOnly = true)
+    public AdminLoginSession login(AdminLoginRequest request){
+        Admin admin = adminRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다.")
+        );
+
+        if (!passwordEncoder.matches(request.getPassword(), admin.getPassword())){
+            throw new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다.");
+        }
+
+        AdminStatus status = AdminStatus.from(admin.getStatus());
+        if (!status.isLogin()) {
+            throw new IllegalStateException(status.getErrorMessage());
+        }
+
+        return AdminLoginSession.from(admin);
     }
 
     @Transactional(readOnly = true)

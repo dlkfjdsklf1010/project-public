@@ -1,9 +1,9 @@
 package com.commerceapp.admin.controller;
 
-import com.commerceapp.admin.dto.AdminDetailResponse;
-import com.commerceapp.admin.dto.AdminSignupRequest;
-import com.commerceapp.admin.dto.AdminUpdateRequest;
+import com.commerceapp.admin.dto.*;
 import com.commerceapp.admin.service.AdminService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +23,17 @@ public class AdminController {
         adminService.signup(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 신청이 완료되었습니다.");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@Valid @RequestBody AdminLoginRequest request, HttpServletRequest httprquest){
+        AdminLoginSession loginSession = adminService.login(request);
+
+        HttpSession session = httprquest.getSession(true);
+        session.setAttribute("LoginAdmin", loginSession);
+        session.setMaxInactiveInterval(864000);
+
+        return ResponseEntity.status(HttpStatus.OK).body("로그인 성공!");
     }
 
     @GetMapping("/{adminId}")
