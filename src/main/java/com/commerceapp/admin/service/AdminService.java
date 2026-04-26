@@ -2,7 +2,6 @@ package com.commerceapp.admin.service;
 
 import com.commerceapp.admin.dto.*;
 import com.commerceapp.admin.entity.Admin;
-import com.commerceapp.admin.enums.AdminRole;
 import com.commerceapp.admin.enums.AdminStatus;
 import com.commerceapp.admin.repository.AdminRepository;
 import com.commerceapp.common.config.PasswordEncoder;
