@@ -125,4 +125,13 @@ public class AdminService {
         admin.reject(request.getRejectReason(), LocalDateTime.now());
     }
 
+    @Transactional
+    public void deleteAdmin(Long adminId){
+        Admin admin = adminRepository.findById(adminId).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
+        );
+
+        adminRepository.delete(admin);
+    }
+
 }

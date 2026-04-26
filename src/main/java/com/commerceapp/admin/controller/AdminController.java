@@ -1,6 +1,7 @@
 package com.commerceapp.admin.controller;
 
 import com.commerceapp.admin.dto.*;
+import com.commerceapp.admin.entity.Admin;
 import com.commerceapp.admin.service.AdminService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -92,6 +93,14 @@ public class AdminController {
 
         return ResponseEntity.status(HttpStatus.OK).body("관리자 가입이 거부되었습니다.");
 
+    }
+
+    @DeleteMapping("/delete/{adminId}")
+    public ResponseEntity<String> deleteAdmin(@PathVariable Long adminId){
+
+        adminService.deleteAdmin(adminId);
+
+        return ResponseEntity.status(HttpStatus.OK).body("계정이 삭제되었습니다.");
     }
 
 }
