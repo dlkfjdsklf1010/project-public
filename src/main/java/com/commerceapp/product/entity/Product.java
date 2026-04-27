@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product {
 
+    //속성
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -50,6 +52,22 @@ public class Product {
     private String createdByEmail;
 
 
+
+    //생성자
+    public Product(String name, String category, int price, int stock,
+                   String state, String createdByName, String createdByEmail) {
+        this.name = name;
+        this.category = category;
+        this.price = price;
+        this.stock = stock;
+        this.state = state;
+        this.createdByName = createdByName;
+        this.createdByEmail = createdByEmail;
+    }
+
+
+    //기능
+
     // 상품 등록 후 자동으로 처리
     @PrePersist
     public void autoCreate() {
@@ -71,10 +89,10 @@ public class Product {
     // 재고 변경
     public void updateStock(int quantity) {
         this.stock += quantity;
-
+        // 단종이 아닐경우 변경
         if (!this.state.equals("DISCONTINUED")) {
             if (this.stock <= 0) {
-                this.stock = Integer.parseInt("SOLD_OUT");  // string 타입을 int 로 변환
+                this.state = "SOLD_OUT";
             } else {this.state = "ON_SALE";
             }
         }
