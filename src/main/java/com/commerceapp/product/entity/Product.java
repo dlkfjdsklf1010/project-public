@@ -4,14 +4,14 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "Products")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class product {
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -78,11 +78,6 @@ public class product {
             } else {this.state = "ON_SALE";
             }
         }
-    }
-    public enum state {
-        ON_SALE,
-        SOLD_OUT,
-        DISCONTINUED
     }
 
     // 상태 변경
