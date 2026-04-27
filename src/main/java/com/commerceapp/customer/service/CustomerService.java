@@ -58,7 +58,7 @@ public class CustomerService {
     public Customer deleteCustomer(Long id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 고객이 없습니다"));
-        customerRepository.delete(customer);
+        customer.delete();
         return customer;
     }
 }

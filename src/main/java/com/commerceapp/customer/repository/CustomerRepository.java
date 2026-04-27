@@ -14,7 +14,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     boolean existsByEmail(String email);
 
 
-    @Query("SELECT c FROM Customer c WHERE (c.name LIKE %:keyword% OR c.email LIKE %:keyword%) AND (:status IS NULL OR c.status = :status)")
+    @Query("SELECT c FROM Customer c WHERE (c.name LIKE %:keyword% OR c.email LIKE %:keyword%) AND (:status IS NULL OR c.status = :status) AND c.isDeleted = false ")
     Page<Customer> findByKeywordAndStatus(@Param("keyword") String keyword, @Param("status") String status, Pageable pageable);
 
     /// customer에서 email을 찾는 메서드, 예외 처리를 위해 Optional 사용

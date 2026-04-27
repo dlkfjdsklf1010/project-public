@@ -74,4 +74,12 @@ public class Customer extends BaseEntity {
         customer.status = status;
         return customer;
     }
+
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
+
+    public void delete() {
+        this.isDeleted = true;
+    }
+
 }
