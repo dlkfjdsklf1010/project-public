@@ -84,6 +84,22 @@ public class Product extends BaseEntity {
         }
     }
 
+    public void update(String name, String category, int price, int stock) {
+
+        // 전달받은 값으로 필드 수정
+        this.name = name;
+        this.category = category;
+        this.price = price;
+        this.stock = stock;
+
+        // 재고에 따른 상태 자동 처리
+        if(this.stock == 0) {
+            this.state = ProductStatus.SOLD_OUT; // 재고 없으면 품절
+        } else if (this.state != ProductStatus.DISCONTINUED) {
+            this.state = ProductStatus.ON_SALE; // 재고 있으면 판매중
+        }
+    }
+
     public enum ProductStatus {
         ON_SALE,
         SOLD_OUT,
