@@ -27,26 +27,4 @@ public class CustomerService {
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         return customerRepository.findByKeywordAndStatus(keyword, status, pageable);
     }
-
-    @Transactional(readOnly = true)
-    public Customers getCustomer(Long id) {
-        return customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("해당 고객이 존재하지 않습니다."));
-    }
-
-    @Transactional
-    public Customers updateCustomer(Long id, String name, String email, String phoneNumber) {
-        Customers customer = customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("해당 고객이 존재하지 않습니다."));
-        customer.updateCustomers(name, email, phoneNumber);
-        return customer;
-    }
-
-    @Transactional
-    public Customers updateStatus(Long id, String status) {
-        Customers customer = customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("해당 고객이 존재하지 않습니다."));
-        customer.updateStatus(status);
-        return customer;
-    }
 }

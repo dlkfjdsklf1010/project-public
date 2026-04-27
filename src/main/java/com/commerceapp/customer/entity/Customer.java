@@ -1,4 +1,4 @@
-package com.commerceapp.customers.entity;
+package com.commerceapp.customer.entity;
 
 import com.commerceapp.common.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Entity
 @Table(name = "customers")
-public class Customers extends BaseEntity {
+public class Customer extends BaseEntity {
 
     /*========== 속성 ===========*/
 
@@ -36,7 +36,7 @@ public class Customers extends BaseEntity {
 
     /*========== 생성자 ===========*/
 
-    public Customers(String name, String email, String password, String phoneNumber) {
+    public Customer(String name, String email, String password, String phoneNumber) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -56,5 +56,24 @@ public class Customers extends BaseEntity {
     /* 고객 상태 변경 */
     public void updateStatus(String status) {
         this.status = status;
+    }
+
+    /// 주문 확인용으로 임의 생성했으니 지워도 됩니다!
+    /// 고객 생성
+    public static Customer create(
+            String name,
+            String email,
+            String password,
+            String phoneNumber,
+            String status
+    ) {
+        Customer customer = new Customer();
+        customer.name = name;
+        customer.email = email;
+        customer.password = password;
+        customer.phoneNumber = phoneNumber;
+        customer.status = status;
+
+        return customer;
     }
 }
