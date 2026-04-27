@@ -14,12 +14,12 @@ public class CustomerListResponse {
     private String status;
     private LocalDateTime createdAt;
 
-    public CustomerListResponse(Customer customers) {
-        this.id = customers.getId();
-        this.name = customers.getName();
-        this.email = customers.getEmail();
-        this.phoneNumber = customers.getPhoneNumber();
-        this.status = customers.getStatus();
-        this.createdAt = customers.getCreatedAt();
+    public CustomerListResponse(Customer customer) {
+        this.id = customer.getId();
+        this.name = customer.getName();
+        this.email = customer.getEmail();
+        this.phoneNumber = customer.getPhoneNumber();
+        this.status = customer.getStatus();
+        this.createdAt = customer.getCreatedAt();
     }
 }

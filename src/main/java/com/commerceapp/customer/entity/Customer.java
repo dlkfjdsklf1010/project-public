@@ -41,7 +41,7 @@ public class Customer extends BaseEntity {
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
-        this.status = "활성"; /* 기본값 */
+        this.status = "ACTIVE"; /* 기본값 */
     }
 
     /*========== 기능 ===========*/
@@ -58,8 +58,7 @@ public class Customer extends BaseEntity {
         this.status = status;
     }
 
-    /// 주문 확인용으로 임의 생성했으니 지워도 됩니다!
-    /// 고객 생성
+
     public static Customer create(
             String name,
             String email,
@@ -73,7 +72,6 @@ public class Customer extends BaseEntity {
         customer.password = password;
         customer.phoneNumber = phoneNumber;
         customer.status = status;
-
         return customer;
     }
 }
