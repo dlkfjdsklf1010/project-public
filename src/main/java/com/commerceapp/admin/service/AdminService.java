@@ -87,6 +87,18 @@ public class AdminService {
     }
 
     @Transactional
+    public void updateMyProfile(Long adminId, AdminMyProfileUpdateRequest request){
+        Admin admin = adminRepository.findById(adminId).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
+        );
+        admin.update(
+                request.getName(),
+                request.getEmail(),
+                request.getPhoneNumber()
+        );
+    }
+
+    @Transactional
     public void changeAdminRole(Long adminId, AdminRoleUpdateRequest request){
         Admin admin = adminRepository.findById(adminId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")

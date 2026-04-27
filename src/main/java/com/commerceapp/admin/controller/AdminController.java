@@ -76,6 +76,17 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body("관리자 정보 수정이 완료되었습니다.");
     }
 
+    @PatchMapping("/me")
+    public ResponseEntity<String> updateMyProfile(
+            @Valid @RequestBody AdminMyProfileUpdateRequest request,
+            @SessionAttribute(name = "LoginAdmin")
+            AdminLoginSession loginSession){
+
+        adminService.updateMyProfile(loginSession.getId(), request);
+
+        return ResponseEntity.status(HttpStatus.OK).body("프로필 정보가 수정되었습니다.");
+    }
+
     @PatchMapping("/changerole/{adminId}")
     public ResponseEntity<String> changeAdminRole(
             @PathVariable Long adminId,
