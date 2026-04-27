@@ -1,5 +1,6 @@
 package com.commerceapp.admin.entity;
 
+import com.commerceapp.admin.enums.AdminStatus;
 import com.commerceapp.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -46,27 +47,37 @@ public class Admin extends BaseEntity {
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.role = role;
-        this.status = "승인대기";
+        this.status = AdminStatus.PENDING.getDatabaseValue();
         this.isDeleted = false;
     }
 
+    public void update(String name, String email, String phoneNumber){
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
+
     public void activate(LocalDateTime currentTime) {
-        this.status = "활성";
+        this.status = AdminStatus.ACTIVATE.getDatabaseValue();
         this.approvedAt = currentTime;
     }
 
     public void deactivate() {
-        this.status = "비활성";
+        this.status = AdminStatus.DEACTIVATE.getDatabaseValue();
     }
 
     public void ban() {
-        this.status = "정지";
+        this.status = AdminStatus.BANNED.getDatabaseValue();
     }
 
     public void reject(String reason, LocalDateTime currentTime) {
-        this.status = "거부";
+        this.status = AdminStatus.REJECTED.getDatabaseValue();
         this.rejectReason = reason;
         this.rejectedAt = currentTime;
+    }
+
+    public void changeRole(String newRole){
+        this.role = newRole;
     }
 
 
