@@ -57,6 +57,15 @@ public class AdminController {
         return  ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<AdminProfileResponse> getMyProfile(
+            @SessionAttribute(name = "LoginAdmin")
+            AdminLoginSession loginSession){
+        AdminProfileResponse response = adminService.getMyProfile(loginSession.getId());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PatchMapping("/{adminId}")
     public ResponseEntity<String> updateAdmin(
             @PathVariable Long adminId,
