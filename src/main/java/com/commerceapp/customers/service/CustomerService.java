@@ -41,4 +41,12 @@ public class CustomerService {
         customer.updateCustomers(name, email, phoneNumber);
         return customer;
     }
+
+    @Transactional
+    public Customers updateStatus(Long id, String status) {
+        Customers customer = customerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 고객이 존재하지 않습니다."));
+        customer.updateStatus(status);
+        return customer;
+    }
 }
