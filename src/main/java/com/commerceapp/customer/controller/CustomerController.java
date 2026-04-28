@@ -86,7 +86,7 @@ public class CustomerController {
             @RequestParam(defaultValue = "asc") String sortOrder) {
 
         // 1. 로그인 여부 확인
-        if(session.getAttribute("LoginAdmin") == null){
+        if(session.getAttribute("loginAdmin") == null){
             throw new IllegalStateException("로그인이 필요합니다.");
         }
 
@@ -108,7 +108,7 @@ public class CustomerController {
     @GetMapping("/{id}")
     public CustomerDetailResponse getCustomer(HttpSession session, @PathVariable Long id) {
         // 1. 로그인 여부 확인
-        if (session.getAttribute("LoginAdmin") == null) {
+        if (session.getAttribute("loginAdmin") == null) {
             throw new IllegalStateException("로그인이 필요합니다.");
         }
 
@@ -128,7 +128,7 @@ public class CustomerController {
     @PatchMapping("/{id}")
     public CustomerDetailResponse updateCustomer(HttpSession session, @PathVariable Long id, @RequestBody CustomerUpdateRequest request) {
         // 1. 로그인 여부 확인
-        if (session.getAttribute("LoginAdmin") == null) {
+        if (session.getAttribute("loginAdmin") == null) {
             throw new IllegalStateException("로그인이 필요합니다.");
         }
 
@@ -149,7 +149,7 @@ public class CustomerController {
     @PatchMapping("/{id}/status")
     public CustomerDetailResponse updateStatus(HttpSession session, @PathVariable Long id, @RequestBody CustomerStatusRequest request) {
         // 1. 로그인 여부 확인
-        if (session.getAttribute("LoginAdmin") == null) {
+        if (session.getAttribute("loginAdmin") == null) {
             throw new IllegalStateException("로그인이 필요합니다.");
         }
 
@@ -169,7 +169,7 @@ public class CustomerController {
     @DeleteMapping("/{id}")
     public CustomerDeleteResponse deleteCustomer(HttpSession session, @PathVariable Long id) {
         // 1. 로그인 여부 확인
-        if (session.getAttribute("LoginAdmin") == null) {
+        if (session.getAttribute("loginAdmin") == null) {
             throw new IllegalStateException("로그인이 필요합니다.");
         }
 
