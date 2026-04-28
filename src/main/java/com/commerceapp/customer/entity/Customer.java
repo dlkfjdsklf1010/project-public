@@ -89,22 +89,15 @@ public class Customer extends BaseEntity {
      * 더미 데이터 생성용 정적 팩토리 메서드
      * DataInitializer에서 테스트 데이터 생성 시 사용
      */
-    public static Customer create(
-            String name,
-            String email,
-            String password,
-            String phoneNumber,
-            String status
-    ) {
+    public static Customer create(String name, String email, String password, String phoneNumber, String status) {
         Customer customer = new Customer();
         customer.name = name;
         customer.email = email;
         customer.password = password;
         customer.phoneNumber = phoneNumber;
         customer.status = status;
+
         return customer;
     }
-
-
 
 }

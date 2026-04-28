@@ -3,7 +3,7 @@ package com.commerceapp.order.entity;
 import com.commerceapp.admin.entity.Admin;
 import com.commerceapp.common.entity.BaseEntity;
 import com.commerceapp.customer.entity.Customer;
-import com.commerceapp.order.entity.enums.OrderStatus;
+import com.commerceapp.order.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,7 +33,7 @@ public class Order extends BaseEntity {
     private Admin admin;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> orderItems = new ArrayList<>();
+    private List<OrderItem> orderItemList = new ArrayList<>();
 
     @Column(name = "total_price", nullable = false)
     private int totalPrice = 0;
@@ -45,6 +45,7 @@ public class Order extends BaseEntity {
     @Column(name = "is_canceled", nullable = false)
     private boolean isCanceled = false;
 
+    @Column(name = "cancel_reason")
     private String cancelReason;
 
     // 주문 생성 메서드
@@ -59,7 +60,7 @@ public class Order extends BaseEntity {
 
     // OrderItem 추가
     public void addOrderItem(OrderItem item) {
-        orderItems.add(item);
+        orderItemList.add(item);
         item.assignOrder(this);
         this.totalPrice += item.getTotalSum();
     }

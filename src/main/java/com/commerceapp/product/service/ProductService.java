@@ -3,11 +3,12 @@ package com.commerceapp.product.service;
 import com.commerceapp.admin.dto.AdminLoginSession;
 import com.commerceapp.admin.entity.Admin;
 import com.commerceapp.admin.repository.AdminRepository;
-import com.commerceapp.product.dto.PageResponse;
+import com.commerceapp.product.dto.ProductPageResponse;
 import com.commerceapp.product.dto.ProductResponse;
 import com.commerceapp.product.entity.Product;
 import com.commerceapp.product.dto.ProductCreateRequest;
 import com.commerceapp.product.dto.ProductDetailResponse;
+import com.commerceapp.product.enums.ProductStatus;
 import com.commerceapp.product.repository.ProductRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,18 +51,18 @@ public class ProductService {
         return new ProductDetailResponse(savedProduct);
     }
 
-    // 상품 전체 조회
+    // 상품 리스트 조회
     @Transactional(readOnly = true)
-    public PageResponse<ProductResponse> getAllproducts(
+    public ProductPageResponse<ProductResponse> getProductList(
             String keyword,
             String category,
-            String state,
+            ProductStatus state,
             int page,
             int size,
             String sortBy,
-            String dirention
+            String direction
     ) { //정렬 조건 만들기
-        Sort sort = dirention.equalsIgnoreCase("desc")  // 정렬 조건이 "desc"
+        Sort sort = direction.equalsIgnoreCase("desc")  // 정렬 조건이 "desc"
                 ? Sort.by(sortBy).descending()  // 내림차순
                 : Sort.by(sortBy).ascending();   // 오름차순
         //spring에서는 페이지가 0부터 시작해야 함
@@ -78,18 +76,12 @@ public class ProductService {
         Page<ProductResponse> mapped = result.map(ProductResponse::new);
 
         // pageResponse로 변환 -> 반환
-        return new PageResponse<>(
-                mapped.getContent(),   // 데이터 리스트
-                mapped.getNumber() + 1,  // 0페이지 -> 1로
-                mapped.getSize(),          // 페이지당 개수
-                mapped.getTotalElements(),  // 전체 데이터 수
-                mapped.getTotalPages()     // 전체 페이지 수
-        );
+        return ProductPageResponse.from(mapped);
     }
 
     // 상품 상세 조회
     @Transactional(readOnly = true)
-    public ProductDetailResponse getDetail(Long productId) {
+    public ProductDetailResponse getProductDetail(Long productId) {
 
         // 아이디로 상품 조회
         Product product = productRepository.findById(productId)
@@ -99,18 +91,32 @@ public class ProductService {
         return new ProductDetailResponse(product);
     }
 
-    // 상품 수정
+    /**
+     * 상품 수정
+     * admin이 로그인했을 때만 수정 가능하도록 코드 수정
+     */
     @Transactional
-    public void update(Long productId, String name, String category, int price, int stock) {
+    public void updateProduct(Long productId, String name, String category, int price, AdminLoginSession adminSession) {
+        if (adminSession == null) {
+            throw new IllegalArgumentException("관리자만 상품 수정이 가능합니다.");
+        }
+
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
 
-        product.update(name, category, price, stock);
+        product.update(name, category, price);
     }
 
-    // 상품 삭제
+    /**
+     * 상품 삭제
+     * admin이 로그인했을 때만 수정 가능하도록 코드 수정
+     */
     @Transactional
-    public void delete(Long productId) {
+    public void delete(Long productId, AdminLoginSession adminSession) {
+        if (adminSession == null) {
+            throw new IllegalArgumentException("관리자만 상품 수정이 가능합니다.");
+        }
+
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
 

@@ -48,7 +48,7 @@ public class CustomerService {
      * @return 페이징된 고객 목록
      */
     @Transactional(readOnly = true)
-    public Page<Customer> getCustomers(String keyword, String status, int page, int size, String sortBy, String sortOrder) {
+    public Page<Customer> getCustomerList(String keyword, String status, int page, int size, String sortBy, String sortOrder) {
         Sort sort = sortOrder.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
@@ -129,7 +129,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public void signUp(CustomerSignupRequest request) {
+    public void signupCustomer(CustomerSignupRequest request) {
         // 1. 이메일 중복 확인
         if(customerRepository.existsByEmail(request.getEmail())) {
            throw new IllegalArgumentException("이미 사용중인 이메일입니다.");
@@ -149,7 +149,7 @@ public class CustomerService {
     }
 
     @Transactional(readOnly = true)
-    public Customer login(CustomerLoginRequest request) {
+    public Customer loginCustomer(CustomerLoginRequest request) {
         // 1. 이메일로 고객 조회
         Customer customer = customerRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다."));

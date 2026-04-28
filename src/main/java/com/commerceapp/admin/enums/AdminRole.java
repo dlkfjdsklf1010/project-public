@@ -4,15 +4,14 @@ import lombok.Getter;
 
 @Getter
 public enum AdminRole {
-
     CS("CS관리자"),
     MANAGER("운영관리자"),
     SUPER("슈퍼관리자");
 
-    private final String databaseValue;
+    private final String displayName;
 
-    AdminRole(String databaseValue) {
-        this.databaseValue = databaseValue;
+    AdminRole(String displayName) {
+        this.displayName = displayName;
     }
 
 }

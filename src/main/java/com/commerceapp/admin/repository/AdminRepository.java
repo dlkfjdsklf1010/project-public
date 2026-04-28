@@ -28,4 +28,5 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
             @Param("status") String status,
             Pageable pageable
     );
+
 }

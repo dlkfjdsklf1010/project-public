@@ -36,7 +36,7 @@ public class CustomerController {
     public ResponseEntity<String> signUp(@Valid @RequestBody CustomerSignupRequest request) {
         // 1. 요청 body에서 회원가입 데이터 받아오기
         // 2. Service에 회원가입 요청 전달
-        customerService.signUp(request);
+        customerService.signupCustomer(request);
 
         // 3. 회원가입 성공 응답 반환
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.");
@@ -46,7 +46,7 @@ public class CustomerController {
     public ResponseEntity<String> login(@Valid @RequestBody CustomerLoginRequest request, HttpSession session) {
         // 1. 요청 body에서 로그인 데이터 받아오기
         // 2. Service에 로그인 요청 전달
-        Customer customer = customerService.login(request);
+        Customer customer = customerService.loginCustomer(request);
 
         // 3. 세션에 고객 정보 저장
         session.setAttribute("customer", customer.getId());
@@ -76,7 +76,7 @@ public class CustomerController {
      * @return 페이징된 고객 목록
      */
     @GetMapping
-    public Page<CustomerListResponse> getCustomers(
+    public Page<CustomerListResponse> getCustomerList(
             HttpSession session,
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "") String status,
@@ -93,12 +93,9 @@ public class CustomerController {
         // 2. 쿼리 파라미터로 검색 키워드, 상태 필터, 페이징, 정렬 정보 받아오기
         // 3. Service에 조회 요청 전달
         // 4. 조회된 고객 목록을 CustomerListResponse DTO로 변환하여 반환
-        return customerService.getCustomers(keyword, status, page, size, sortBy, sortOrder)
+        return customerService.getCustomerList(keyword, status, page, size, sortBy, sortOrder)
                 .map(CustomerListResponse::new);
     }
-
-
-
 
     /**
      * 고객 단건 조회 (GET /api/customers/{id})
@@ -178,5 +175,5 @@ public class CustomerController {
         // 4. 삭제된 고객 정보를 CustomerDeleteResponse DTO로 변환하여 반환
         return new CustomerDeleteResponse(customerService.deleteCustomer(id));
     }
-}
 
+}

@@ -2,7 +2,7 @@ package com.commerceapp.order.controller;
 
 import com.commerceapp.admin.dto.AdminLoginSession;
 import com.commerceapp.order.dto.*;
-import com.commerceapp.order.entity.enums.OrderStatus;
+import com.commerceapp.order.enums.OrderStatus;
 import com.commerceapp.order.service.OrderService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class OrderController {
 
     // 주문 리스트 조회
     @GetMapping
-    public ResponseEntity<OrderPageResponse> getOrders(
+    public ResponseEntity<OrderPageResponse> getOrderList(
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -50,9 +50,7 @@ public class OrderController {
 
     // 주문 상세 조회
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDetailResponse> getOrderDetail(
-            @PathVariable Long orderId
-    ) {
+    public ResponseEntity<OrderDetailResponse> getOrderDetail(@PathVariable Long orderId) {
         return ResponseEntity.ok(orderService.getOrderDetail(orderId));
     }
 
@@ -72,7 +70,7 @@ public class OrderController {
 
     // 주문 취소
     @PatchMapping("/{orderId}/cancel")
-    public ResponseEntity<Void> cancel(
+    public ResponseEntity<Void> cancelOrder(
             @PathVariable Long orderId,
             @RequestBody String reason
     ) {

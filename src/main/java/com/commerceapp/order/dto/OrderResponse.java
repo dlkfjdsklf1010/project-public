@@ -26,7 +26,7 @@ public class OrderResponse {
         this.customerName = order.getCustomer().getName();
 
         // OrderItem -> DTO 변환
-        this.itemList = order.getOrderItems().stream()
+        this.itemList = order.getOrderItemList().stream()
                 .map(OrderItemResponse::new)
                 .collect(Collectors.toList());
 

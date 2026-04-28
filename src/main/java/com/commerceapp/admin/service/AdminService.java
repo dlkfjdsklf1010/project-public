@@ -23,8 +23,9 @@ public class AdminService {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // 회원가입
     @Transactional
-    public void signup(AdminSignupRequest request){
+    public void adminSignup(AdminSignupRequest request){
         if (adminRepository.existsByEmail(request.getEmail())){
             throw new IllegalArgumentException("이미 사용중인 이메일입니다.");
         }
@@ -37,11 +38,13 @@ public class AdminService {
                 request.getPhoneNumber(),
                 request.getRole()
         );
+
         adminRepository.save(admin);
     }
 
+    // 로그인
     @Transactional(readOnly = true)
-    public AdminLoginSession login(AdminLoginRequest request){
+    public AdminLoginSession adminLogin(AdminLoginRequest request){
         Admin admin = adminRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다.")
         );
@@ -58,26 +61,28 @@ public class AdminService {
         return AdminLoginSession.from(admin);
     }
 
+    // 리스트 조회
     @Transactional(readOnly = true)
     public AdminPageResponse getAdminList(
             String keyword, AdminRole role, AdminStatus status,
             int page, int size, String sortBy, String direction){
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         Pageable pageable = PageRequest.of(page -1, size, sort);
-        String roleValue = (role != null) ? role.getDatabaseValue() : null;
-        String statusValue = (status != null) ? status.getDatabaseValue() : null;
+        String roleValue = (role != null) ? role.getDisplayName() : null;
+        String statusValue = (status != null) ? status.getDisplayName() : null;
         Page<Admin> adminPage = adminRepository.searchAdmins(keyword, roleValue, statusValue,pageable);
 
         return AdminPageResponse.from(adminPage);
     }
 
+    // 상세 조회
     @Transactional(readOnly = true)
     public AdminDetailResponse getAdminDetail(Long adminId){
         Admin admin = adminRepository.findById(adminId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
         );
-        return AdminDetailResponse.from(admin);
 
+        return AdminDetailResponse.from(admin);
     }
 
     @Transactional(readOnly = true)
@@ -85,6 +90,7 @@ public class AdminService {
         Admin admin = adminRepository.findById(adminId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
         );
+
         return AdminProfileResponse.from(admin);
     }
 
@@ -93,15 +99,16 @@ public class AdminService {
         Admin admin = adminRepository.findById(adminId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
         );
+
         if (adminRepository.existsByEmail(request.getEmail())){
             throw new IllegalArgumentException("이미 사용중인 이메일입니다.");
         }
+
         admin.update(
                 request.getName(),
                 request.getEmail(),
                 request.getPhoneNumber()
         );
-
     }
 
     @Transactional
@@ -109,6 +116,7 @@ public class AdminService {
         Admin admin = adminRepository.findById(adminId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
         );
+
         admin.update(
                 request.getName(),
                 request.getEmail(),
@@ -121,6 +129,7 @@ public class AdminService {
         Admin admin = adminRepository.findById(adminId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
         );
+
         admin.updateMyPassword(
                 request.getPassword()
         );
@@ -132,7 +141,7 @@ public class AdminService {
                 () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
         );
 
-        admin.changeRole(request.getRole().getDatabaseValue());
+        admin.changeRole(request.getRole().getDisplayName());
     }
 
     @Transactional
@@ -140,6 +149,7 @@ public class AdminService {
         Admin admin = adminRepository.findById(adminId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
         );
+
         if (request.getStatus() == AdminStatus.BANNED){
             admin.ban();
         } else if (request.getStatus() == AdminStatus.DEACTIVATE){
@@ -154,8 +164,8 @@ public class AdminService {
         Admin admin = adminRepository.findById(adminId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
         );
-        if (!AdminStatus.PENDING.getDatabaseValue().equals(admin.getStatus())){
-            throw new IllegalStateException("승인대기 상태인 관리자만 거부할 수 있습니다.");
+        if (!AdminStatus.PENDING.getDisplayName().equals(admin.getStatus())){
+            throw new IllegalStateException("승인 대기 상태인 관리자만 거부할 수 있습니다.");
         }
 
         admin.activate(LocalDateTime.now());
@@ -166,7 +176,8 @@ public class AdminService {
         Admin admin = adminRepository.findById(adminId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 관리자입니다.")
         );
-        if (!AdminStatus.PENDING.getDatabaseValue().equals(admin.getStatus())){
+
+        if (!AdminStatus.PENDING.getDisplayName().equals(admin.getStatus())){
             throw new IllegalStateException("승인대기 상태인 관리자만 거부할 수 있습니다.");
         }
 

@@ -5,7 +5,6 @@ import com.commerceapp.common.entity.BaseEntity;
 import com.commerceapp.product.enums.ProductStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,6 +44,19 @@ public class Product extends BaseEntity {
         this.stock = stock;
         this.status = status;
         this.admin = admin;
+    }
+
+    // 생성
+    public static Product create(String name, String category, int price, int stock, ProductStatus status, Admin admin) {
+        Product product = new Product();
+        product.name = name;
+        product.category = category;
+        product.price = price;
+        product.stock = stock;
+        product.status = status;
+        product.admin = admin;
+
+        return product;
     }
 
     // 주문 시 수량 변경

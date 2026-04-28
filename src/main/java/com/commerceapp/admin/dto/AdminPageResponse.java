@@ -16,9 +16,7 @@ public class AdminPageResponse {
     private final long totalElements;
     private final int totalPages;
 
-
     private AdminPageResponse(Page<Admin> adminPage) {
-
         this.content = adminPage.getContent().stream()
                 .map(AdminListResponse::from)
                 .collect(Collectors.toList());
@@ -31,4 +29,5 @@ public class AdminPageResponse {
     public static AdminPageResponse from(Page<Admin> adminPage){
         return new AdminPageResponse(adminPage);
     }
+
 }

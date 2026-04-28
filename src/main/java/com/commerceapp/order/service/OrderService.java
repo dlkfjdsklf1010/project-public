@@ -8,7 +8,7 @@ import com.commerceapp.customer.repository.CustomerRepository;
 import com.commerceapp.order.dto.*;
 import com.commerceapp.order.entity.Order;
 import com.commerceapp.order.entity.OrderItem;
-import com.commerceapp.order.entity.enums.OrderStatus;
+import com.commerceapp.order.enums.OrderStatus;
 import com.commerceapp.order.repository.OrderRepository;
 import com.commerceapp.product.entity.Product;
 import com.commerceapp.product.repository.ProductRepository;
@@ -41,13 +41,13 @@ public class OrderService {
      */
     @Transactional
     public OrderResponse createOrder(OrderCreateRequest request, HttpSession session) {
-//         테스트용 1번 고객
-        Customer customer = customerRepository.findById(1L)
-                .orElseThrow(()-> new IllegalArgumentException("해당 고객 정보가 없습니다."));
-        log.info("주문 생성 요청 - customerId={}, customerName={}",
-                customer.getId(), customer.getName());
+        if (session == null) {
+            throw new IllegalArgumentException("로그인이 필요합니다.");
+        }
 
-//        Customer customer = (Customer) session.getAttribute("loginCustomer");
+        Customer customer = customerRepository.findById(request.getCustomerId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 고객 정보가 없습니다."));
+
         Admin admin = null;
 
         Order order = Order.create(customer, admin, generateOrderNumber());
@@ -58,7 +58,7 @@ public class OrderService {
             }
 
             Product product = productRepository.findById(itemRequest.getProductId())
-                    .orElseThrow(() -> new IllegalArgumentException("선택하신 상품이 존재하지 않습니다."));
+                    .orElseThrow(() -> new IllegalArgumentException("선택한 상품이 존재하지 않습니다."));
 
             product.decreateStock(itemRequest.getQuantity());
             OrderItem orderItem = OrderItem.create(product, itemRequest.getQuantity());
@@ -84,7 +84,7 @@ public class OrderService {
 
         Order order = Order.create(customer, admin, generateOrderNumber());
 
-        request.getItems().forEach(itemRequest -> {
+        request.getItemList().forEach(itemRequest -> {
             Product product = productRepository.findById(itemRequest.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
 
@@ -146,7 +146,7 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("상품 주문 내역이 없습니다."));
 
         // 재고 복구
-        order.getOrderItems().forEach(item -> {
+        order.getOrderItemList().forEach(item -> {
             Product product = productRepository.findById(item.getProduct().getId())
                     .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
 
