@@ -26,10 +26,10 @@ public class AdminController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody AdminLoginRequest request, HttpServletRequest httprquest){
+    public ResponseEntity<String> login(@Valid @RequestBody AdminLoginRequest request, HttpServletRequest httpRequest){
         AdminLoginSession loginSession = adminService.login(request);
 
-        HttpSession session = httprquest.getSession(true);
+        HttpSession session = httpRequest.getSession(true);
         session.setAttribute("LoginAdmin", loginSession);
         session.setMaxInactiveInterval(864000);
 
