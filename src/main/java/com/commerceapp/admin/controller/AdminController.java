@@ -26,14 +26,27 @@ public class AdminController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody AdminLoginRequest request, HttpServletRequest httprquest){
+    public ResponseEntity<String> login(@Valid @RequestBody AdminLoginRequest request, HttpServletRequest httpRequest){
         AdminLoginSession loginSession = adminService.login(request);
 
-        HttpSession session = httprquest.getSession(true);
-        session.setAttribute("loginAdmin", loginSession);
+        HttpSession session = httpRequest.getSession(true);
+        session.setAttribute("LoginAdmin", loginSession);
         session.setMaxInactiveInterval(864000);
 
         return ResponseEntity.status(HttpStatus.OK).body("로그인 성공!");
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+
+
+        if (session != null) {
+            session.invalidate();
+        }
+
+        return ResponseEntity.ok("성공적으로 로그아웃 되었습니다.");
     }
 
     @GetMapping("/{adminId}")
@@ -44,6 +57,15 @@ public class AdminController {
         return  ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<AdminProfileResponse> getMyProfile(
+            @SessionAttribute(name = "LoginAdmin")
+            AdminLoginSession loginSession){
+        AdminProfileResponse response = adminService.getMyProfile(loginSession.getId());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PatchMapping("/{adminId}")
     public ResponseEntity<String> updateAdmin(
             @PathVariable Long adminId,
@@ -52,6 +74,28 @@ public class AdminController {
         adminService.adminUpdate(adminId, request);
 
         return ResponseEntity.status(HttpStatus.OK).body("관리자 정보 수정이 완료되었습니다.");
+    }
+
+    @PatchMapping("/me")
+    public ResponseEntity<String> updateMyProfile(
+            @Valid @RequestBody AdminMyProfileUpdateRequest request,
+            @SessionAttribute(name = "LoginAdmin")
+            AdminLoginSession loginSession){
+
+        adminService.updateMyProfile(loginSession.getId(), request);
+
+        return ResponseEntity.status(HttpStatus.OK).body("프로필 정보가 수정되었습니다.");
+    }
+
+    @PatchMapping("/mypassword")
+    public ResponseEntity<String> updateMyPassword(
+            @Valid @RequestBody AdminMyPasswordUpdateRequest request,
+            @SessionAttribute(name = "LoginAdmin")
+            AdminLoginSession loginSession){
+
+        adminService.updateMyPassword(loginSession.getId(), request);
+
+        return ResponseEntity.status(HttpStatus.OK).body("비밀번호가 수정되었습니다.");
     }
 
     @PatchMapping("/changerole/{adminId}")

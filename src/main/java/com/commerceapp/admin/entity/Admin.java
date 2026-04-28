@@ -57,6 +57,10 @@ public class Admin extends BaseEntity {
         this.phoneNumber = phoneNumber;
     }
 
+    public void updateMyPassword(String password){
+        this.password = password;
+    }
+
     public void activate(LocalDateTime currentTime) {
         this.status = AdminStatus.ACTIVATE.getDatabaseValue();
         this.approvedAt = currentTime;
