@@ -1,8 +1,12 @@
 package com.commerceapp.customer.controller;
 
 import com.commerceapp.customer.dto.*;
+import com.commerceapp.customer.entity.Customer;
 import com.commerceapp.customer.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
 
@@ -27,6 +31,29 @@ public class CustomerController {
     }
 
     /*========== 기능 ===========*/
+
+    @PostMapping("/signup")
+    public ResponseEntity<String> signUp(@Valid @RequestBody CustomerSignupRequest request) {
+        // 1. 요청 body에서 회원가입 데이터 받아오기
+        // 2. Service에 회원가입 요청 전달
+        customerService.signUp(request);
+
+        // 3. 회원가입 성공 응답 반환
+        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@Valid @RequestBody CustomerLoginRequest request, HttpSession session) {
+        // 1. 요청 body에서 로그인 데이터 받아오기
+        // 2. Service에 로그인 요청 전달
+        Customer customer = customerService.login(request);
+
+        // 3. 세션에 고객 정보 저장
+        session.setAttribute("customer", customer.getId());
+
+        // 4. 로그인 성공 응답 반환
+        return ResponseEntity.status(HttpStatus.OK).body("로그인 성공!");
+    }
 
     /**
      * 고객 목록 조회 (GET /api/customers)
