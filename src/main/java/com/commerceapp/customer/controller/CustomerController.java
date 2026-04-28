@@ -55,6 +55,15 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.OK).body("로그인 성공!");
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpSession session) {
+        // 1. 세션 무효화
+        session.invalidate();
+
+        // 2. 로그아웃 성공 응답 반환
+        return ResponseEntity.status(HttpStatus.OK).body("로그아웃 성공!");
+    }
+
     /**
      * 고객 목록 조회 (GET /api/customers)
      * 키워드 검색, 상태 필터, 페이징, 정렬을 지원합니다.
