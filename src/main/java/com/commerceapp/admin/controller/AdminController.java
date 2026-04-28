@@ -1,6 +1,8 @@
 package com.commerceapp.admin.controller;
 
 import com.commerceapp.admin.dto.*;
+import com.commerceapp.admin.enums.AdminRole;
+import com.commerceapp.admin.enums.AdminStatus;
 import com.commerceapp.admin.service.AdminService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -30,7 +32,7 @@ public class AdminController {
         AdminLoginSession loginSession = adminService.login(request);
 
         HttpSession session = httpRequest.getSession(true);
-        session.setAttribute("LoginAdmin", loginSession);
+        session.setAttribute("loginAdmin", loginSession);
         session.setMaxInactiveInterval(864000);
 
         return ResponseEntity.status(HttpStatus.OK).body("로그인 성공!");
@@ -49,8 +51,42 @@ public class AdminController {
         return ResponseEntity.ok("성공적으로 로그아웃 되었습니다.");
     }
 
+    private void validAdmin(AdminLoginSession loginSession){
+        if (loginSession == null){
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+        if (!AdminRole.SUPER.getDatabaseValue().equals(loginSession.getRole())){
+            throw new IllegalStateException("권한이 없습니다.");
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<AdminPageResponse> getAdminList(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) AdminRole role,
+            @RequestParam(required = false) AdminStatus status,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction,
+            @SessionAttribute(name = "loginAdmin", required = false)
+            AdminLoginSession loginSession){
+
+        validAdmin(loginSession);
+
+        AdminPageResponse response = adminService.getAdminList(
+                keyword, role, status, page, size, sortBy, direction);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @GetMapping("/{adminId}")
-    public ResponseEntity<AdminDetailResponse> getAdminDetail(@PathVariable Long adminId){
+    public ResponseEntity<AdminDetailResponse> getAdminDetail(
+            @PathVariable Long adminId,
+            @SessionAttribute(name = "loginAdmin", required = false)
+            AdminLoginSession loginSession){
+
+        validAdmin(loginSession);
 
         AdminDetailResponse response = adminService.getAdminDetail(adminId);
 
@@ -59,7 +95,7 @@ public class AdminController {
 
     @GetMapping("/me")
     public ResponseEntity<AdminProfileResponse> getMyProfile(
-            @SessionAttribute(name = "LoginAdmin")
+            @SessionAttribute(name = "loginAdmin")
             AdminLoginSession loginSession){
         AdminProfileResponse response = adminService.getMyProfile(loginSession.getId());
 
@@ -79,7 +115,7 @@ public class AdminController {
     @PatchMapping("/me")
     public ResponseEntity<String> updateMyProfile(
             @Valid @RequestBody AdminMyProfileUpdateRequest request,
-            @SessionAttribute(name = "LoginAdmin")
+            @SessionAttribute(name = "loginAdmin")
             AdminLoginSession loginSession){
 
         adminService.updateMyProfile(loginSession.getId(), request);
@@ -90,7 +126,7 @@ public class AdminController {
     @PatchMapping("/mypassword")
     public ResponseEntity<String> updateMyPassword(
             @Valid @RequestBody AdminMyPasswordUpdateRequest request,
-            @SessionAttribute(name = "LoginAdmin")
+            @SessionAttribute(name = "loginAdmin")
             AdminLoginSession loginSession){
 
         adminService.updateMyPassword(loginSession.getId(), request);
@@ -101,7 +137,11 @@ public class AdminController {
     @PatchMapping("/changerole/{adminId}")
     public ResponseEntity<String> changeAdminRole(
             @PathVariable Long adminId,
-            @Valid @RequestBody AdminRoleUpdateRequest request){
+            @Valid @RequestBody AdminRoleUpdateRequest request,
+            @SessionAttribute(name = "loginAdmin", required = false)
+            AdminLoginSession loginSession){
+
+        validAdmin(loginSession);
 
         adminService.changeAdminRole(adminId, request);
 
@@ -111,7 +151,11 @@ public class AdminController {
     @PatchMapping("/changestatus/{adminId}")
     public ResponseEntity<String> changeAdminStatus(
             @PathVariable Long adminId,
-            @Valid @RequestBody AdminStatusUpdateRequest request){
+            @Valid @RequestBody AdminStatusUpdateRequest request,
+            @SessionAttribute(name = "loginAdmin", required = false)
+            AdminLoginSession loginSession){
+
+        validAdmin(loginSession);
 
         adminService.changeAdminStatus(adminId, request);
 
@@ -119,7 +163,12 @@ public class AdminController {
     }
 
     @PatchMapping("/approve/{adminId}")
-    public ResponseEntity<String> approveAdmin(@PathVariable Long adminId) {
+    public ResponseEntity<String> approveAdmin(
+            @PathVariable Long adminId,
+            @SessionAttribute(name = "loginAdmin", required = false)
+            AdminLoginSession loginSession) {
+
+        validAdmin(loginSession);
 
         adminService.approveAdmin(adminId);
 
@@ -130,7 +179,11 @@ public class AdminController {
     @PatchMapping("/reject/{adminId}")
     public ResponseEntity<String> rejectAdmin(
             @PathVariable Long adminId,
-            @Valid @RequestBody AdminRejectReasonRequest request){
+            @Valid @RequestBody AdminRejectReasonRequest request,
+            @SessionAttribute(name = "loginAdmin", required = false)
+            AdminLoginSession loginSession) {
+
+        validAdmin(loginSession);
 
         adminService.rejectAdmin(adminId, request);
 
@@ -139,7 +192,12 @@ public class AdminController {
     }
 
     @DeleteMapping("/delete/{adminId}")
-    public ResponseEntity<String> deleteAdmin(@PathVariable Long adminId){
+    public ResponseEntity<String> deleteAdmin(
+            @PathVariable Long adminId,
+            @SessionAttribute(name = "loginAdmin", required = false)
+            AdminLoginSession loginSession){
+
+        validAdmin(loginSession);
 
         adminService.deleteAdmin(adminId);
 
