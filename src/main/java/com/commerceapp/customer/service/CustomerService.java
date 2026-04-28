@@ -1,6 +1,9 @@
 package com.commerceapp.customer.service;
 
+import com.commerceapp.common.config.PasswordEncoder;
 import com.commerceapp.common.exception.NotFoundException;
+import com.commerceapp.customer.dto.CustomerLoginRequest;
+import com.commerceapp.customer.dto.CustomerSignupRequest;
 import com.commerceapp.customer.entity.Customer;
 import com.commerceapp.customer.repository.CustomerRepository;
 import org.springframework.data.domain.Page;
@@ -20,12 +23,14 @@ public class CustomerService {
     /*========== 속성 ===========*/
 
     private final CustomerRepository customerRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /*========== 생성자 ===========*/
 
     /* 생성자 주입 방식으로 CustomerRepository 의존성 주입 */
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /*========== 기능 ===========*/
@@ -120,6 +125,41 @@ public class CustomerService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("해당 고객이 없습니다"));
         customer.delete();
+        return customer;
+    }
+
+    @Transactional
+    public void signUp(CustomerSignupRequest request) {
+        // 1. 이메일 중복 확인
+        if(customerRepository.existsByEmail(request.getEmail())) {
+           throw new IllegalArgumentException("이미 사용중인 이메일입니다.");
+        }
+
+        // 2. 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+
+        // 3. 고객 객체 생성 및 저장
+        Customer customer = new Customer(
+                request.getName(),
+                request.getEmail(),
+                encodedPassword,
+                request.getPhoneNumber()
+        );
+        customerRepository.save(customer);
+    }
+
+    @Transactional(readOnly = true)
+    public Customer login(CustomerLoginRequest request) {
+        // 1. 이메일로 고객 조회
+        Customer customer = customerRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다."));
+
+        // 2. 비밀번호 확인
+        if(!passwordEncoder.matches(request.getPassword(), customer.getPassword())) {
+            throw new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 3. 고객 반환
         return customer;
     }
 }
