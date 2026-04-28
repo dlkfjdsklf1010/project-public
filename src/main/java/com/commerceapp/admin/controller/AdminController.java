@@ -2,6 +2,7 @@ package com.commerceapp.admin.controller;
 
 import com.commerceapp.admin.dto.*;
 import com.commerceapp.admin.enums.AdminRole;
+import com.commerceapp.admin.enums.AdminStatus;
 import com.commerceapp.admin.service.AdminService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -59,8 +60,33 @@ public class AdminController {
         }
     }
 
+    @GetMapping
+    public ResponseEntity<AdminPageResponse> getAdminList(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) AdminRole role,
+            @RequestParam(required = false) AdminStatus status,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction,
+            @SessionAttribute(name = "loginAdmin", required = false)
+            AdminLoginSession loginSession){
+
+        validAdmin(loginSession);
+
+        AdminPageResponse response = adminService.getAdminList(
+                keyword, role, status, page, size, sortBy, direction);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @GetMapping("/{adminId}")
-    public ResponseEntity<AdminDetailResponse> getAdminDetail(@PathVariable Long adminId){
+    public ResponseEntity<AdminDetailResponse> getAdminDetail(
+            @PathVariable Long adminId,
+            @SessionAttribute(name = "loginAdmin", required = false)
+            AdminLoginSession loginSession){
+
+        validAdmin(loginSession);
 
         AdminDetailResponse response = adminService.getAdminDetail(adminId);
 

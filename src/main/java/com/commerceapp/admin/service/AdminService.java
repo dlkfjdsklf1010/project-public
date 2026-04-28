@@ -2,10 +2,15 @@ package com.commerceapp.admin.service;
 
 import com.commerceapp.admin.dto.*;
 import com.commerceapp.admin.entity.Admin;
+import com.commerceapp.admin.enums.AdminRole;
 import com.commerceapp.admin.enums.AdminStatus;
 import com.commerceapp.admin.repository.AdminRepository;
 import com.commerceapp.common.config.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +56,19 @@ public class AdminService {
         }
 
         return AdminLoginSession.from(admin);
+    }
+
+    @Transactional(readOnly = true)
+    public AdminPageResponse getAdminList(
+            String keyword, AdminRole role, AdminStatus status,
+            int page, int size, String sortBy, String direction){
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+        Pageable pageable = PageRequest.of(page -1, size, sort);
+        String roleValue = (role != null) ? role.getDatabaseValue() : null;
+        String statusValue = (status != null) ? status.getDatabaseValue() : null;
+        Page<Admin> adminPage = adminRepository.searchAdmins(keyword, roleValue, statusValue,pageable);
+
+        return AdminPageResponse.from(adminPage);
     }
 
     @Transactional(readOnly = true)
