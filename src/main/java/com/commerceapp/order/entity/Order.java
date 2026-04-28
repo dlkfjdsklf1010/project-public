@@ -46,14 +46,6 @@ public class Order extends BaseEntity {
 
     private String cancelReason;
 
-    // 주문 번호 생성
-    public void assignOrderNumber(String orderNumber) {
-        if (this.orderNumber != null) {
-            throw new IllegalArgumentException("이미 주문번호가 존재합니다.");
-        }
-        this.orderNumber = orderNumber;
-    }
-
     // 주문 생성 메서드
     public static Order create(Customer customer, Admin admin, String orderNumber) {
         Order order = new Order();
@@ -68,7 +60,7 @@ public class Order extends BaseEntity {
     public void addOrderItem(OrderItem item) {
         orderItems.add(item);
         item.assignOrder(this);
-        this.totalPrice += item.getTotalPrice();
+        this.totalPrice += item.getTotalSum();
     }
 
     // 상태 변경
@@ -85,7 +77,7 @@ public class Order extends BaseEntity {
     // 주문 취소
     public void cancel(String reason) {
         if (this.status != OrderStatus.READY) {
-            throw new IllegalArgumentException("취소 불가");
+            throw new IllegalArgumentException("상품이 준비중이므로 취소할 수 없습니다.");
         }
 
         this.status = OrderStatus.CANCELED;

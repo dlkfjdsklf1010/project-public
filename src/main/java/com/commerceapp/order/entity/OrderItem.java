@@ -33,8 +33,8 @@ public class OrderItem {
     @Column(nullable = false)
     private int quantity = 0;
 
-    @Column(name = "total_price", nullable = false)
-    private int totalPrice = price * quantity;
+    @Column(name = "total_sum", nullable = false)
+    private int totalSum = price * quantity;
 
     public static OrderItem create(Product product, int quantity) {
         OrderItem item = new OrderItem();
@@ -42,7 +42,7 @@ public class OrderItem {
         item.productName = product.getName();
         item.price = product.getPrice();
         item.quantity = quantity;
-        item.totalPrice = item.price * item.quantity;
+        item.totalSum = item.price * item.quantity;
 
         return item;
     }

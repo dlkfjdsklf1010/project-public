@@ -100,6 +100,6 @@ public class DataInitializer {
         }
 
         productRepository.saveAll(products);
-        log.info("상품 100개 생성 및 활성화 완료. (랜덤으로 품절, 단종 있음)");
+        log.info("상품 100개 생성 및 활성화 완료. (랜덤으로 품절, 단종 포함)");
     }
 }

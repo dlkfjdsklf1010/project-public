@@ -1,9 +1,7 @@
 package com.commerceapp.order.controller;
 
-import com.commerceapp.order.dto.OrderCreateRequest;
-import com.commerceapp.order.dto.OrderDetailResponse;
-import com.commerceapp.order.dto.OrderPageResponse;
-import com.commerceapp.order.dto.OrderResponse;
+import com.commerceapp.admin.dto.AdminLoginSession;
+import com.commerceapp.order.dto.*;
 import com.commerceapp.order.entity.OrderStatus;
 import com.commerceapp.order.service.OrderService;
 import jakarta.servlet.http.HttpSession;
@@ -17,13 +15,22 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
     private final OrderService orderService;
 
-    // 주문 생성
+    // 고객 주문 생성
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(
             @RequestBody OrderCreateRequest request,
             HttpSession session
     ) {
         return ResponseEntity.ok(orderService.createOrder(request, session));
+    }
+
+    // CS 주문 생성
+    @PostMapping("/admin")
+    public ResponseEntity<OrderResponse> createOrderByAdmin(
+            @RequestBody OrderCreateByAdminRequest request,
+            HttpSession session
+    ) {
+        return ResponseEntity.ok(orderService.createOrderByAdmin(request, session));
     }
 
     // 주문 리스트 조회
@@ -41,6 +48,7 @@ public class OrderController {
         );
     }
 
+    // 주문 상세 조회
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDetailResponse> getOrderDetail(
             @PathVariable Long orderId
@@ -50,8 +58,14 @@ public class OrderController {
 
     // 주문 상태 변경
     @PatchMapping("/{orderId}/status")
-    public ResponseEntity<Void> updateStatus(@PathVariable Long orderId) {
-        orderService.updateStatus(orderId);
+    public ResponseEntity<Void> updateStatus(
+            @PathVariable Long orderId,
+            @SessionAttribute(name = "loginAdmin", required = false) AdminLoginSession adminSession
+    ) {
+        if (adminSession == null) {
+            throw new IllegalArgumentException("관리자 로그인이 필요합니다.");
+        }
+        orderService.updateStatus(orderId, adminSession);
 
         return ResponseEntity.ok().build();
     }

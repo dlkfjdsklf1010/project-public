@@ -6,5 +6,5 @@ import java.util.List;
 
 @Getter
 public class OrderCreateRequest {
-    private List<OrderItemRequest> items;
+    private List<OrderItemRequest> itemList;
 }

@@ -30,7 +30,7 @@ public class AdminController {
         AdminLoginSession loginSession = adminService.login(request);
 
         HttpSession session = httprquest.getSession(true);
-        session.setAttribute("LoginAdmin", loginSession);
+        session.setAttribute("loginAdmin", loginSession);
         session.setMaxInactiveInterval(864000);
 
         return ResponseEntity.status(HttpStatus.OK).body("로그인 성공!");

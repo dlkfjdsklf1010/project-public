@@ -55,7 +55,9 @@ public class Product extends BaseEntity {
             throw new IllegalArgumentException("단종 상품은 주문할 수 없습니다.");
         }
 
-        if (this.state == ProductStatus.SOLD_OUT) {
+        if (this.stock == 0) {
+            this.state = ProductStatus.SOLD_OUT;
+
             throw new IllegalArgumentException("품절 상품은 주문할 수 없습니다.");
         }
 
