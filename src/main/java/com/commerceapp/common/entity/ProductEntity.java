@@ -1,6 +1,5 @@
-package com.commerceapp.product.entity;
+package com.commerceapp.common.entity;
 
-import com.commerceapp.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,13 +7,11 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Getter
 @Entity
-@Table(name = "products")
+@Table(name = "Products")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Product extends BaseEntity {
-
-    //속성
+public class ProductEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,22 +50,6 @@ public class Product extends BaseEntity {
     private String createdByEmail;
 
 
-
-    //생성자
-    public Product(String name, String category, int price, int stock,
-                   String state, String createdByName, String createdByEmail) {
-        this.name = name;
-        this.category = category;
-        this.price = price;
-        this.stock = stock;
-        this.state = state;
-        this.createdByName = createdByName;
-        this.createdByEmail = createdByEmail;
-    }
-
-
-    //기능
-
     // 상품 등록 후 자동으로 처리
     @PrePersist
     public void autoCreate() {
@@ -81,7 +62,7 @@ public class Product extends BaseEntity {
     }
 
     // 상품 수정
-    public void update(String name, String category, int price, int stock) {
+    public void update(String name, String category, int price) {
         this.name = name;
         this.category = category;
         this.price = price;
@@ -90,10 +71,10 @@ public class Product extends BaseEntity {
     // 재고 변경
     public void updateStock(int quantity) {
         this.stock += quantity;
-        // 단종이 아닐경우 변경
+
         if (!this.state.equals("DISCONTINUED")) {
             if (this.stock <= 0) {
-                this.state = "SOLD_OUT";
+                this.stock = Integer.parseInt("SOLD_OUT");  // string 타입을 int 로 변환
             } else {this.state = "ON_SALE";
             }
         }
