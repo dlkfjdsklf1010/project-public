@@ -1,5 +1,6 @@
 package com.commerceapp.common.config;
 
+import com.commerceapp.common.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,4 +31,27 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST).body(errors);
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleIllegalStateException(IllegalStateException e){
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("상태:" + e.getMessage());
+    }
+
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleHttpMessageNotReadableException(){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("잘못된 변경 요청입니다.");
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> handleNotFoundException(NotFoundException e){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("찾을 수 없음" + e.getMessage());
+    }
+
+
 }

@@ -1,17 +1,18 @@
 package com.commerceapp.product.entity;
 
+import com.commerceapp.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
-
-@Entity
-@Table(name = "Products")
 @Getter
+@Entity
+@Table(name = "products")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Product {
+public class Product extends BaseEntity {
 
     //속성
 
@@ -80,7 +81,7 @@ public class Product {
     }
 
     // 상품 수정
-    public void update(String name, String category, int price) {
+    public void update(String name, String category, int price, int stock) {
         this.name = name;
         this.category = category;
         this.price = price;
