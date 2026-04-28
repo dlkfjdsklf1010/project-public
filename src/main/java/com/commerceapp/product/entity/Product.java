@@ -13,47 +13,46 @@ import java.time.LocalDateTime;
 @Table(name = "products")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product extends BaseEntity {
-
-    //속성
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //  상품 이름
     @Column(nullable = false, length = 255)
     private String name;
 
-    // 카테고리
     @Column(nullable = false, length = 30)
     private String category;
 
-    // 가격
     @Column(nullable = false)
     private int price;
 
-    // 재고
     @Column(nullable = false)
     private int stock;
 
-    // 상태
     @Column(nullable = false, length = 30)
     private ProductStatus state = ProductStatus.ON_SALE;
 
-    public static Product create(
-            String name,
-            String category,
-            int price,
-            int stock,
-            ProductStatus state
-    ) {
-        Product product = new Product();
-        product.name = name;
-        product.category = category;
-        product.price = price;
-        product.stock = stock;
-        product.state = state;
-        return product;
+    // 등록일
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    // 등록 관리자 이름
+    @Column(nullable = false, length = 20)
+    private String createdByName;
+
+    // 등록 관리자 이메일
+    @Column(nullable = false, length = 255)
+    private String createdByEmail;
+
+    //생성자
+    public Product(String name, String category, int price, int stock, String state, String createdByName, String createdByEmail) {
+        this.name = name;
+        this.category = category;
+        this.price = price;
+        this.stock = stock;
+        this.state = state;
+        this.createdByName = createdByName;
+        this.createdByEmail = createdByEmail;
     }
 
     public void decreateStock(int quantity) {
@@ -70,33 +69,8 @@ public class Product extends BaseEntity {
 
             throw new IllegalArgumentException("품절 상품은 주문할 수 없습니다.");
         }
-    private String state;
-
-    // 등록일
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    // 등록 관리자 이름
-    @Column(nullable = false, length = 20)
-    private String createdByName;
-
-    // 등록 관리자 이메일
-    @Column(nullable = false, length = 255)
-    private String createdByEmail;
 
 
-
-    //생성자
-    public Product(String name, String category, int price, int stock,
-                   String state, String createdByName, String createdByEmail) {
-        this.name = name;
-        this.category = category;
-        this.price = price;
-        this.stock = stock;
-        this.state = state;
-        this.createdByName = createdByName;
-        this.createdByEmail = createdByEmail;
-    }
 
 
     //기능
