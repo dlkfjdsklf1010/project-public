@@ -15,7 +15,7 @@ public class Product extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String name;
 
     @Column(nullable = false, length = 30)
@@ -29,6 +29,23 @@ public class Product extends BaseEntity {
 
     @Column(nullable = false, length = 30)
     private ProductStatus state = ProductStatus.ON_SALE;
+
+//    // 등록 관리자 이름
+//    @Column(nullable = false, length = 20)
+//    private String createdByName;
+//
+//    // 등록 관리자 이메일
+//    @Column(nullable = false, length = 255)
+//    private String createdByEmail;
+
+    public Product(String name, String category, int price, int stock) {
+        this.name = name;
+        this.category = category;
+        this.price = price;
+        this.stock = stock;
+//        this.createdByName = createdByName;
+//        this.createdByEmail = createdByEmail;
+    }
 
     public static Product create(
             String name,
@@ -44,6 +61,13 @@ public class Product extends BaseEntity {
         product.stock = stock;
         product.state = state;
         return product;
+    }
+
+    // 상품 수정
+    public void update(String name, String category, int price, int stock) {
+        this.name = name;
+        this.category = category;
+        this.price = price;
     }
 
     public void decreateStock(int quantity) {
@@ -81,22 +105,6 @@ public class Product extends BaseEntity {
         // 단종이 아니면 판매중으로 복구
         if (this.state != ProductStatus.DISCONTINUED && this.stock > 0) {
             this.state = ProductStatus.ON_SALE;
-        }
-    }
-
-    public void update(String name, String category, int price, int stock) {
-
-        // 전달받은 값으로 필드 수정
-        this.name = name;
-        this.category = category;
-        this.price = price;
-        this.stock = stock;
-
-        // 재고에 따른 상태 자동 처리
-        if(this.stock == 0) {
-            this.state = ProductStatus.SOLD_OUT; // 재고 없으면 품절
-        } else if (this.state != ProductStatus.DISCONTINUED) {
-            this.state = ProductStatus.ON_SALE; // 재고 있으면 판매중
         }
     }
 
