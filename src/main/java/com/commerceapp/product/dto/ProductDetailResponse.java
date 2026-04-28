@@ -27,9 +27,9 @@ public class ProductDetailResponse {
         this.category = product.getCategory();
         this.price = product.getPrice();
         this.stock = product.getStock();
-        this.state = product.getState();
-        this.createdByName = product.getCreatedByName();
-        this.createdByEmail = product.getCreatedByEmail();
+        this.state = product.getState().name();
+//        this.createdByName = product.getCreatedByName();
+//        this.createdByEmail = product.getCreatedByEmail();
         this.createdAt = product.getCreatedAt();
     }
 }

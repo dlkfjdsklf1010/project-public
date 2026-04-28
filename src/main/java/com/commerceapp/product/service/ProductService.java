@@ -26,10 +26,9 @@ public class ProductService {
                 request.getName(),
                 request.getCategory(),
                 request.getPrice(),
-                request.getStock(),
-                request.getState(),
-                adminName,
-                adminEmail
+                request.getStock()
+//                adminName,
+//                adminEmail
         );
 
         // db에 저장
