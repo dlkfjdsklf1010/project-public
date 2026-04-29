@@ -1,5 +1,6 @@
 package com.commerceapp.admin.dto;
 
+import com.commerceapp.admin.enums.AdminRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -28,6 +29,6 @@ public class AdminSignupRequest {
     private String phoneNumber;
 
     @NotBlank(message = "역할은 필수 선택입니다.")
-    private String role;
+    private AdminRole role;
 
 }

@@ -11,7 +11,8 @@ public enum AdminStatus {
     PENDING("승인대기","계정 승인대기 중"),
     REJECTED("거부","계정 신청 거부됨"),
     BANNED("정지","계정 정지됨"),
-    DEACTIVATE("비활성","계정 비활성화됨");
+    DEACTIVATE("비활성","계정 비활성화됨"),
+    DELETED("삭제","계정 삭제됨.");
 
     private final String displayName;
     private final String message;

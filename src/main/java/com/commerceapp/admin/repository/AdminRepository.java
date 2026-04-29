@@ -11,10 +11,13 @@ import java.util.Optional;
 
 public interface AdminRepository extends JpaRepository<Admin, Long> {
 
+    // 이메일 중복체크
     boolean existsByEmail(String email);
 
-    Optional<Admin> findByEmail(String email);
+    // 로그인용 이메일 조회
+    Optional<Admin> findByEmailAndIsDeletedFalse(String email);
 
+    // 관리자 리스트 검색, 삭제된 계정은 제외
     @Query("""
             SELECT a FROM Admin a
             WHERE a.isDeleted = false
@@ -24,8 +27,8 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
            """)
     Page<Admin> searchAdmins(
             @Param("keyword") String keyword,
-            @Param("role") String role,
-            @Param("status") String status,
+            @Param("role") com.commerceapp.admin.enums.AdminRole role,
+            @Param("status") com.commerceapp.admin.enums.AdminStatus status,
             Pageable pageable
     );
 

@@ -47,7 +47,7 @@ public class OrderDetailResponse {
         if (order.getAdmin() != null) {
             this.adminName = order.getAdmin().getName();
             this.adminEmail = order.getAdmin().getEmail();
-            this.adminRole = order.getAdmin().getRole();
+            this.adminRole = order.getAdmin().getRole().getDisplayName();
         }
 
         this.totalPrice = order.getTotalPrice();

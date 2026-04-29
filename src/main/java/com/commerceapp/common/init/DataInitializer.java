@@ -62,14 +62,14 @@ public class DataInitializer {
 
         String superAdminEmail = "rkdworn@gmail.com";
 
-        return adminRepository.findByEmail(superAdminEmail)
+        return adminRepository.findByEmailAndIsDeletedFalse(superAdminEmail)
                 .orElseGet(() -> {
                     Admin admin = new Admin(
                             "슈퍼관리자",
                             superAdminEmail,
                             passwordEncoder.encode("12345678"),
                             "010-1234-5678",
-                            "슈퍼관리자"
+                            AdminRole.SUPER
                     );
                     admin.activate(LocalDateTime.now());
 
@@ -80,36 +80,45 @@ public class DataInitializer {
                 });
     }
 
-    // 테스트 관리자 5명 생성
+    // 테스트 관리자 20명 생성 (슈퍼관리자 5명, CS관리자 5명, 운영관리자 10명)
     private void createTestAdmins() {
 
         String encodedPassword = passwordEncoder.encode("12345678");
         LocalDateTime now = LocalDateTime.now();
 
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 20; i++) {
             String email = "testadmin" + i + "@gmail.com";
 
             if (adminRepository.existsByEmail(email)) continue;
+
+            AdminRole role;
+            if (i <= 5) {
+                role = AdminRole.SUPER;
+            } else if (i <= 10) {
+                role = AdminRole.CS;
+            } else {
+                role = AdminRole.MANAGER;
+            }
 
             Admin admin = new Admin(
                     "테스트관리자" + i,
                     email,
                     encodedPassword,
                     "010-9999-" + String.format("%04d", i),
-                    "운영"
+                    role
             );
 
-            switch (i) {
+            switch (i % 5) {
                 case 1 -> admin.activate(now);
                 case 3 -> admin.reject("테스트용 거부 사유", now);
                 case 4 -> admin.ban();
-                case 5 -> admin.deactivate();
+                case 0 -> admin.deactivate();
             }
 
             adminRepository.save(admin);
         }
 
-        log.info("테스트용 운영 관리자 계정 생성 완료 (활성:1, 승인 대기:1, 거부:1, 정지:1, 비활성:1)");
+        log.info("테스트용 운영 관리자 계정 20명 생성 완료 (슈퍼:5, CS:5, 운영:10 / 상태별 균등 분배)");
     }
 
     // 고객 생성
