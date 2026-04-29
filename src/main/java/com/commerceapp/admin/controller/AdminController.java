@@ -19,30 +19,30 @@ public class AdminController {
 
     private final AdminService adminService;
 
+    // 회원가입
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@Valid @RequestBody AdminSignupRequest request){
-
-        adminService.signup(request);
+    public ResponseEntity<String> adminSignup(@Valid @RequestBody AdminSignupRequest request){
+        adminService.adminSignup(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 신청이 완료되었습니다.");
     }
 
+    // 로그인
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody AdminLoginRequest request, HttpServletRequest httpRequest){
-        AdminLoginSession loginSession = adminService.login(request);
+    public ResponseEntity<String> adminLogin(@Valid @RequestBody AdminLoginRequest request, HttpServletRequest requestHttp){
+        AdminLoginSession loginSession = adminService.adminLogin(request);
 
-        HttpSession session = httpRequest.getSession(true);
+        HttpSession session = requestHttp.getSession(true);
         session.setAttribute("loginAdmin", loginSession);
         session.setMaxInactiveInterval(864000);
 
-        return ResponseEntity.status(HttpStatus.OK).body("로그인 성공!");
+        return ResponseEntity.status(HttpStatus.OK).body("관리자 로그인 성공!");
     }
 
+    // 로그아웃
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request) {
-
+    public ResponseEntity<String> adminLogout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-
 
         if (session != null) {
             session.invalidate();
@@ -51,15 +51,17 @@ public class AdminController {
         return ResponseEntity.ok("성공적으로 로그아웃 되었습니다.");
     }
 
+    // 슈퍼 관리자 권한인지 확인
     private void validAdmin(AdminLoginSession loginSession){
         if (loginSession == null){
             throw new IllegalStateException("로그인이 필요합니다.");
         }
-        if (!AdminRole.SUPER.getDatabaseValue().equals(loginSession.getRole())){
+        if (!AdminRole.SUPER.getDisplayName().equals(loginSession.getRole())){
             throw new IllegalStateException("권한이 없습니다.");
         }
     }
 
+    // 관리자 리스트 조회
     @GetMapping
     public ResponseEntity<AdminPageResponse> getAdminList(
             @RequestParam(required = false) String keyword,
@@ -173,7 +175,6 @@ public class AdminController {
         adminService.approveAdmin(adminId);
 
         return ResponseEntity.status(HttpStatus.OK).body("관리자 가입이 승인되었습니다.");
-
     }
 
     @PatchMapping("/reject/{adminId}")
@@ -188,7 +189,6 @@ public class AdminController {
         adminService.rejectAdmin(adminId, request);
 
         return ResponseEntity.status(HttpStatus.OK).body("관리자 가입이 거부되었습니다.");
-
     }
 
     @DeleteMapping("/delete/{adminId}")
@@ -203,5 +203,4 @@ public class AdminController {
 
         return ResponseEntity.status(HttpStatus.OK).body("계정이 삭제되었습니다.");
     }
-
 }

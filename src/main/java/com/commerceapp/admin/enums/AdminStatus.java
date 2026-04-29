@@ -13,17 +13,17 @@ public enum AdminStatus {
     BANNED("정지","계정 정지됨"),
     DEACTIVATE("비활성","계정 비활성화됨");
 
-    private final String databaseValue;
+    private final String displayName;
     private final String message;
 
-    AdminStatus(String databaseValue, String message) {
-        this.databaseValue = databaseValue;
+    AdminStatus(String displayName, String message) {
+        this.displayName = displayName;
         this.message = message;
     }
 
-    public static AdminStatus from(String databaseValue){
+    public static AdminStatus from(String displayName){
         return Arrays.stream(values())
-                .filter(status -> status.databaseValue.equals(databaseValue))
+                .filter(status -> status.displayName.equals(displayName))
                 .findFirst()
                 .orElse(null);
     }

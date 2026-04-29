@@ -104,9 +104,9 @@ public class Customer extends BaseEntity {
         customer.password = password;
         customer.phoneNumber = phoneNumber;
         customer.status = CustomerStatus.ACTIVE;
+        customer.status = status;
+
         return customer;
     }
-
-
 
 }

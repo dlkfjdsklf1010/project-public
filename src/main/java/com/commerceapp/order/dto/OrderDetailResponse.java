@@ -1,7 +1,7 @@
 package com.commerceapp.order.dto;
 
 import com.commerceapp.order.entity.Order;
-import com.commerceapp.order.entity.OrderStatus;
+import com.commerceapp.order.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 
@@ -36,10 +36,9 @@ public class OrderDetailResponse {
     private OrderStatus status;
     private LocalDateTime createdAt;
 
-    private List<OrderItemResponse> items;
+    private List<OrderItemResponse> itemList;
 
     public OrderDetailResponse(Order order) {
-
         this.orderNumber = order.getOrderNumber();
 
         this.customerName = order.getCustomer().getName();
@@ -55,7 +54,7 @@ public class OrderDetailResponse {
         this.status = order.getStatus();
         this.createdAt = order.getCreatedAt();
 
-        this.items = order.getOrderItems().stream()
+        this.itemList = order.getOrderItemList().stream()
                 .map(OrderItemResponse::new)
                 .toList();
     }

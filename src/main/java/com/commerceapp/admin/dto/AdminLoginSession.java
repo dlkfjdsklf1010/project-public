@@ -5,7 +5,6 @@ import lombok.Getter;
 
 @Getter
 public class AdminLoginSession {
-
     private final Long id;
     private final String email;
     private final String role;

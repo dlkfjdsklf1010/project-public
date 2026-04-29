@@ -9,4 +9,5 @@ public class AdminRoleUpdateRequest {
 
     @NotNull(message = "변경할 역할을 입력하세요.")
     private AdminRole role;
+
 }

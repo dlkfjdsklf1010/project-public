@@ -1,7 +1,7 @@
 package com.commerceapp.order.dto;
 
 import com.commerceapp.order.entity.Order;
-import com.commerceapp.order.entity.OrderStatus;
+import com.commerceapp.order.enums.OrderStatus;
 import lombok.Getter;
 
 @Getter

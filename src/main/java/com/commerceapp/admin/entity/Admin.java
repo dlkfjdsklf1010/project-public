@@ -19,39 +19,49 @@ public class Admin extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false, length = 20)
     private String name;
+
     @Column(nullable = false, unique = true)
     private String email;
+
     @Column(nullable = false)
     private String password;
+
     @Column(nullable = false, length = 20)
     @Pattern(regexp = "^010-\\d{4}-\\d{4}$")
     private String phoneNumber;
+
     @Column(nullable = false, length = 20)
     private String role;
+
     @Column(nullable = false, length = 20)
     private String status;
+
     @Column
     private LocalDateTime approvedAt;
+
     @Column
     private LocalDateTime rejectedAt;
+
     @Column
     private String rejectReason;
+
     @Column(nullable = false)
     private Boolean isDeleted;
 
-    public Admin(String name, String email, String password, String phoneNumber, String role){
+    public Admin(String name, String email, String password, String phoneNumber, String role) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.role = role;
-        this.status = AdminStatus.PENDING.getDatabaseValue();
+        this.status = AdminStatus.PENDING.getDisplayName();
         this.isDeleted = false;
     }
 
-    public void update(String name, String email, String phoneNumber){
+    public void update(String name, String email, String phoneNumber) {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -62,20 +72,20 @@ public class Admin extends BaseEntity {
     }
 
     public void activate(LocalDateTime currentTime) {
-        this.status = AdminStatus.ACTIVATE.getDatabaseValue();
+        this.status = AdminStatus.ACTIVATE.getDisplayName();
         this.approvedAt = currentTime;
     }
 
     public void deactivate() {
-        this.status = AdminStatus.DEACTIVATE.getDatabaseValue();
+        this.status = AdminStatus.DEACTIVATE.getDisplayName();
     }
 
     public void ban() {
-        this.status = AdminStatus.BANNED.getDatabaseValue();
+        this.status = AdminStatus.BANNED.getDisplayName();
     }
 
     public void reject(String reason, LocalDateTime currentTime) {
-        this.status = AdminStatus.REJECTED.getDatabaseValue();
+        this.status = AdminStatus.REJECTED.getDisplayName();
         this.rejectReason = reason;
         this.rejectedAt = currentTime;
     }
@@ -83,6 +93,5 @@ public class Admin extends BaseEntity {
     public void changeRole(String newRole){
         this.role = newRole;
     }
-
 
 }

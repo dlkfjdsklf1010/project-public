@@ -109,9 +109,6 @@ public class CustomerController {
         );
     }
 
-
-
-
     /**
      * 고객 단건 조회 (GET /api/customers/{id})
      * @param id 고객 고유 식별자
@@ -190,5 +187,5 @@ public class CustomerController {
         // 4. 삭제된 고객 정보를 CustomerDeleteResponse DTO로 변환하여 반환
         return new CustomerDeleteResponse(customerService.deleteCustomer(id));
     }
-}
 
+}

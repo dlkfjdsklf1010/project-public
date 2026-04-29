@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 public class OrderPageResponse {
-    private List<OrderSimpleResponse> content;
+    private List<OrderSimpleResponse> productList;
     private int page;
     private int size;
     private Long totalElements;
@@ -16,7 +16,7 @@ public class OrderPageResponse {
 
     public static OrderPageResponse from(Page<Order> pageData) {
         OrderPageResponse response = new OrderPageResponse();
-        response.content = pageData.getContent()
+        response.productList = pageData.getContent()
                 .stream()
                 .map(OrderSimpleResponse::new)
                 .toList();

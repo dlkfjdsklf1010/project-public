@@ -1,7 +1,7 @@
 package com.commerceapp.order.repository;
 
 import com.commerceapp.order.entity.Order;
-import com.commerceapp.order.entity.OrderStatus;
+import com.commerceapp.order.enums.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

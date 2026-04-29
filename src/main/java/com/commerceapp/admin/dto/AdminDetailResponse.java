@@ -39,4 +39,5 @@ public class AdminDetailResponse {
                 admin.getApprovedAt()
         );
     }
+
 }

@@ -10,7 +10,6 @@ public class AdminProfileResponse {
     private final String email;
     private final String phoneNumber;
 
-
     private AdminProfileResponse(String name, String email, String phoneNumber) {
         this.name = name;
         this.email = email;
