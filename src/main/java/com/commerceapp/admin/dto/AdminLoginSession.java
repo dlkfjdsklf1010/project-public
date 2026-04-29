@@ -19,7 +19,7 @@ public class AdminLoginSession {
         return new AdminLoginSession(
                 admin.getId(),
                 admin.getEmail(),
-                admin.getRole()
+                admin.getRole().getDisplayName()
         );
     }
 }

@@ -1,5 +1,6 @@
 package com.commerceapp.admin.entity;
 
+import com.commerceapp.admin.enums.AdminRole;
 import com.commerceapp.admin.enums.AdminStatus;
 import com.commerceapp.common.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -33,11 +34,13 @@ public class Admin extends BaseEntity {
     @Pattern(regexp = "^010-\\d{4}-\\d{4}$")
     private String phoneNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String role;
+    private AdminRole role;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String status;
+    private AdminStatus status;
 
     @Column
     private LocalDateTime approvedAt;
@@ -51,13 +54,13 @@ public class Admin extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted;
 
-    public Admin(String name, String email, String password, String phoneNumber, String role) {
+    public Admin(String name, String email, String password, String phoneNumber, AdminRole role) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.role = role;
-        this.status = AdminStatus.PENDING.getDisplayName();
+        this.status = AdminStatus.PENDING;
         this.isDeleted = false;
     }
 
@@ -72,26 +75,30 @@ public class Admin extends BaseEntity {
     }
 
     public void activate(LocalDateTime currentTime) {
-        this.status = AdminStatus.ACTIVATE.getDisplayName();
+        this.status = AdminStatus.ACTIVATE;
         this.approvedAt = currentTime;
     }
 
     public void deactivate() {
-        this.status = AdminStatus.DEACTIVATE.getDisplayName();
+        this.status = AdminStatus.DEACTIVATE;
     }
 
     public void ban() {
-        this.status = AdminStatus.BANNED.getDisplayName();
+        this.status = AdminStatus.BANNED;
     }
 
     public void reject(String reason, LocalDateTime currentTime) {
-        this.status = AdminStatus.REJECTED.getDisplayName();
+        this.status = AdminStatus.REJECTED;
         this.rejectReason = reason;
         this.rejectedAt = currentTime;
     }
 
-    public void changeRole(String newRole){
+    public void changeRole(AdminRole newRole){
         this.role = newRole;
+    }
+
+    public void deleteAdmin(){
+        this.isDeleted = true;
     }
 
 }

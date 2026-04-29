@@ -1,11 +1,13 @@
 package com.commerceapp.admin.dto;
 
 import com.commerceapp.admin.entity.Admin;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@JsonPropertyOrder({"id","name","email","phoneNumber", "role", "status", "createdAt", "approvedAt"})
 public class AdminListResponse {
 
     private final Long id;
@@ -29,13 +31,15 @@ public class AdminListResponse {
     }
 
     public static AdminListResponse from(Admin admin){
+        String displayRole = admin.getRole().getDisplayName();
+        String displayStatus = admin.getStatus().getDisplayName();
         return new AdminListResponse(
                 admin.getId(),
                 admin.getName(),
                 admin.getEmail(),
                 admin.getPhoneNumber(),
-                admin.getRole(),
-                admin.getStatus(),
+                displayRole,
+                displayStatus,
                 admin.getCreatedAt(),
                 admin.getApprovedAt()
         );

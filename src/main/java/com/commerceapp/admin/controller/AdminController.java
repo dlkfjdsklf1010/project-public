@@ -73,7 +73,7 @@ public class AdminController {
             @RequestParam(defaultValue = "desc") String direction,
             @SessionAttribute(name = "loginAdmin", required = false)
             AdminLoginSession loginSession){
-
+        // 슈퍼관리자 권한 검증
         validAdmin(loginSession);
 
         AdminPageResponse response = adminService.getAdminList(
@@ -82,12 +82,13 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    // 관리자 상세 조회
     @GetMapping("/{adminId}")
     public ResponseEntity<AdminDetailResponse> getAdminDetail(
             @PathVariable Long adminId,
             @SessionAttribute(name = "loginAdmin", required = false)
             AdminLoginSession loginSession){
-
+        // 슈퍼관리자 권한 검증
         validAdmin(loginSession);
 
         AdminDetailResponse response = adminService.getAdminDetail(adminId);
@@ -95,6 +96,7 @@ public class AdminController {
         return  ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    // 관리자 내 프로필 조회
     @GetMapping("/me")
     public ResponseEntity<AdminProfileResponse> getMyProfile(
             @SessionAttribute(name = "loginAdmin")
@@ -104,16 +106,23 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    // 관리자 정보 수정
     @PatchMapping("/{adminId}")
     public ResponseEntity<String> updateAdmin(
             @PathVariable Long adminId,
-            @Valid @RequestBody AdminUpdateRequest request){
+            @Valid @RequestBody AdminUpdateRequest request,
+            @SessionAttribute(name = "loginAdmin", required = false)
+            AdminLoginSession loginSession){
+
+        // 슈퍼관리자 권한 검증
+        validAdmin(loginSession);
 
         adminService.adminUpdate(adminId, request);
 
         return ResponseEntity.status(HttpStatus.OK).body("관리자 정보 수정이 완료되었습니다.");
     }
 
+    // 관리자 내 프로필 수정
     @PatchMapping("/me")
     public ResponseEntity<String> updateMyProfile(
             @Valid @RequestBody AdminMyProfileUpdateRequest request,
@@ -125,6 +134,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body("프로필 정보가 수정되었습니다.");
     }
 
+    // 관리자 내 비밀번호 수정
     @PatchMapping("/mypassword")
     public ResponseEntity<String> updateMyPassword(
             @Valid @RequestBody AdminMyPasswordUpdateRequest request,
@@ -136,6 +146,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body("비밀번호가 수정되었습니다.");
     }
 
+    // 관리자 역할 변경
     @PatchMapping("/changerole/{adminId}")
     public ResponseEntity<String> changeAdminRole(
             @PathVariable Long adminId,
@@ -143,6 +154,7 @@ public class AdminController {
             @SessionAttribute(name = "loginAdmin", required = false)
             AdminLoginSession loginSession){
 
+        // 슈퍼관리자 권한 검증
         validAdmin(loginSession);
 
         adminService.changeAdminRole(adminId, request);
@@ -150,6 +162,7 @@ public class AdminController {
          return ResponseEntity.status(HttpStatus.OK).body("관리자 역할 변경이 완료되었습니다.");
     }
 
+    // 관리자 상태 변경
     @PatchMapping("/changestatus/{adminId}")
     public ResponseEntity<String> changeAdminStatus(
             @PathVariable Long adminId,
@@ -157,6 +170,7 @@ public class AdminController {
             @SessionAttribute(name = "loginAdmin", required = false)
             AdminLoginSession loginSession){
 
+        // 슈퍼관리자 권한 검증
         validAdmin(loginSession);
 
         adminService.changeAdminStatus(adminId, request);
@@ -164,12 +178,14 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body("관리자 상태 변경이 완료되었습니다.");
     }
 
+    // 관리자 가입 승인
     @PatchMapping("/approve/{adminId}")
     public ResponseEntity<String> approveAdmin(
             @PathVariable Long adminId,
             @SessionAttribute(name = "loginAdmin", required = false)
             AdminLoginSession loginSession) {
 
+        // 슈퍼관리자 권한 검증
         validAdmin(loginSession);
 
         adminService.approveAdmin(adminId);
@@ -177,6 +193,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body("관리자 가입이 승인되었습니다.");
     }
 
+    // 관리자 가입 거부
     @PatchMapping("/reject/{adminId}")
     public ResponseEntity<String> rejectAdmin(
             @PathVariable Long adminId,
@@ -184,6 +201,7 @@ public class AdminController {
             @SessionAttribute(name = "loginAdmin", required = false)
             AdminLoginSession loginSession) {
 
+        // 슈퍼관리자 권한 검증
         validAdmin(loginSession);
 
         adminService.rejectAdmin(adminId, request);
@@ -191,12 +209,14 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body("관리자 가입이 거부되었습니다.");
     }
 
+    // 관리자 계정 삭제
     @DeleteMapping("/delete/{adminId}")
     public ResponseEntity<String> deleteAdmin(
             @PathVariable Long adminId,
             @SessionAttribute(name = "loginAdmin", required = false)
             AdminLoginSession loginSession){
 
+        // 슈퍼관리자 권한 검증
         validAdmin(loginSession);
 
         adminService.deleteAdmin(adminId);
