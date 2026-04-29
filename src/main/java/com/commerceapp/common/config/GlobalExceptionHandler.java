@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleNotFoundException(NotFoundException e){
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body("찾을 수 없음" + e.getMessage());
+                .body("찾을 수 없음 " + e.getMessage());
     }
 
 

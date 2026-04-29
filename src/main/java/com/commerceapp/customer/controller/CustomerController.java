@@ -94,7 +94,7 @@ public class CustomerController {
         // 3. Service에 조회 요청 전달
         // 4. 조회된 고객 목록을 CustomerListResponse DTO로 변환하여 반환
         return customerService.getCustomers(keyword, status, page, size, sortBy, sortOrder)
-                .map(CustomerListResponse::new);
+                .map(CustomerListResponse::from);
     }
 
 
@@ -169,7 +169,7 @@ public class CustomerController {
     @DeleteMapping("/{id}")
     public CustomerDeleteResponse deleteCustomer(HttpSession session, @PathVariable Long id) {
         // 1. 로그인 여부 확인
-        if (session.getAttribute("loginAdmin") == null) {
+        if (session.getAttribute("LoginAdmin") == null) {
             throw new IllegalStateException("로그인이 필요합니다.");
         }
 

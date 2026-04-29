@@ -5,6 +5,7 @@ import com.commerceapp.common.exception.NotFoundException;
 import com.commerceapp.customer.dto.CustomerLoginRequest;
 import com.commerceapp.customer.dto.CustomerSignupRequest;
 import com.commerceapp.customer.entity.Customer;
+import com.commerceapp.customer.entity.CustomerStatus;
 import com.commerceapp.customer.repository.CustomerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -107,10 +108,10 @@ public class CustomerService {
      * @return 상태가 변경된 고객 엔티티
      */
     @Transactional
-    public Customer updateStatus(Long id, String status) {
+    public Customer updateStatus(Long id, CustomerStatus status) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("해당 고객이 존재하지 않습니다."));
-        customer.updateStatus(status);
+        customer.updateStatus(status.name());
         return customer;
     }
 
