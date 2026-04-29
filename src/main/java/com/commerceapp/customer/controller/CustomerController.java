@@ -76,7 +76,7 @@ public class CustomerController {
      * @return 페이징된 고객 목록
      */
     @GetMapping
-    public Page<CustomerListResponse> getCustomers(
+    public CustomerPageResponse getCustomers (
             HttpSession session,
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "") String status,
@@ -93,8 +93,10 @@ public class CustomerController {
         // 2. 쿼리 파라미터로 검색 키워드, 상태 필터, 페이징, 정렬 정보 받아오기
         // 3. Service에 조회 요청 전달
         // 4. 조회된 고객 목록을 CustomerListResponse DTO로 변환하여 반환
-        return customerService.getCustomers(keyword, status, page, size, sortBy, sortOrder)
-                .map(CustomerListResponse::from);
+        return new CustomerPageResponse(
+        customerService.getCustomers(keyword, status, page, size, sortBy, sortOrder)
+                .map(CustomerListResponse::from)
+        );
     }
 
 
