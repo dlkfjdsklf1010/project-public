@@ -132,8 +132,117 @@
 ---
 
 ## 프로젝트 파일 구조
-
-
+src
+ ┣ main
+ ┃ ┣ java
+ ┃ ┃ ┗ com.commerceapp
+ ┃ ┃
+ ┃ ┃   ┣ admin
+ ┃ ┃   ┃ ┣ controller
+ ┃ ┃   ┃ ┃ ┗ AdminController.java
+ ┃ ┃   ┃ ┣ dto
+ ┃ ┃   ┃ ┃ ┣ AdminDetailResponse.java
+ ┃ ┃   ┃ ┃ ┣ AdminListResponse.java
+ ┃ ┃   ┃ ┃ ┣ AdminLoginRequest.java
+ ┃ ┃   ┃ ┃ ┣ AdminLoginSession.java
+ ┃ ┃   ┃ ┃ ┣ AdminMyPasswordUpdateRequest.java
+ ┃ ┃   ┃ ┃ ┣ AdminMyProfileUpdateRequest.java
+ ┃ ┃   ┃ ┃ ┣ AdminPageResponse.java
+ ┃ ┃   ┃ ┃ ┣ AdminProfileResponse.java
+ ┃ ┃   ┃ ┃ ┣ AdminRejectReasonRequest.java
+ ┃ ┃   ┃ ┃ ┣ AdminRoleUpdateRequest.java
+ ┃ ┃   ┃ ┃ ┣ AdminSignupRequest.java
+ ┃ ┃   ┃ ┃ ┣ AdminStatusUpdateRequest.java
+ ┃ ┃   ┃ ┃ ┗ AdminUpdateRequest.java
+ ┃ ┃   ┃ ┣ entity
+ ┃ ┃   ┃ ┃ ┗ Admin.java
+ ┃ ┃   ┃ ┣ enums
+ ┃ ┃   ┃ ┃ ┣ AdminRole.java
+ ┃ ┃   ┃ ┃ ┗ AdminStatus.java
+ ┃ ┃   ┃ ┣ repository
+ ┃ ┃   ┃ ┃ ┗ AdminRepository.java
+ ┃ ┃   ┃ ┗ service
+ ┃ ┃   ┃   ┗ AdminService.java
+ ┃ ┃
+ ┃ ┃   ┣ common
+ ┃ ┃   ┃ ┣ config
+ ┃ ┃   ┃ ┃ ┣ GlobalExceptionHandler.java
+ ┃ ┃   ┃ ┃ ┗ PasswordEncoder.java
+ ┃ ┃   ┃ ┣ dto
+ ┃ ┃   ┃ ┣ entity
+ ┃ ┃   ┃ ┃ ┗ BaseEntity.java
+ ┃ ┃   ┃ ┣ exception
+ ┃ ┃   ┃ ┃ ┣ ForbiddenException.java
+ ┃ ┃   ┃ ┃ ┣ NotFoundException.java
+ ┃ ┃   ┃ ┃ ┗ UnauthorizedException.java
+ ┃ ┃   ┃ ┣ init
+ ┃ ┃   ┃ ┃ ┗ DataInitializer.java
+ ┃ ┃   ┃ ┗ repository
+ ┃ ┃
+ ┃ ┃   ┣ customer
+ ┃ ┃   ┃ ┣ controller
+ ┃ ┃   ┃ ┃ ┗ CustomerController.java
+ ┃ ┃   ┃ ┣ dto
+ ┃ ┃   ┃ ┃ ┣ CustomerDeleteResponse.java
+ ┃ ┃   ┃ ┃ ┣ CustomerDetailResponse.java
+ ┃ ┃   ┃ ┃ ┣ CustomerListResponse.java
+ ┃ ┃   ┃ ┃ ┣ CustomerLoginRequest.java
+ ┃ ┃   ┃ ┃ ┣ CustomerLoginSession.java
+ ┃ ┃   ┃ ┃ ┣ CustomerPageResponse.java
+ ┃ ┃   ┃ ┃ ┣ CustomerSignupRequest.java
+ ┃ ┃   ┃ ┃ ┣ CustomerStatusRequest.java
+ ┃ ┃   ┃ ┃ ┗ CustomerUpdateRequest.java
+ ┃ ┃   ┃ ┣ entity
+ ┃ ┃   ┃ ┃ ┗ Customer.java
+ ┃ ┃   ┃ ┣ enums
+ ┃ ┃   ┃ ┃ ┗ CustomerStatus.java
+ ┃ ┃   ┃ ┣ repository
+ ┃ ┃   ┃ ┃ ┗ CustomerRepository.java
+ ┃ ┃   ┃ ┗ service
+ ┃ ┃   ┃   ┗ CustomerService.java
+ ┃ ┃
+ ┃ ┃   ┣ order
+ ┃ ┃   ┃ ┣ controller
+ ┃ ┃   ┃ ┃ ┗ OrderController.java
+ ┃ ┃   ┃ ┣ dto
+ ┃ ┃   ┃ ┃ ┣ OrderCreateByAdminRequest.java
+ ┃ ┃   ┃ ┃ ┣ OrderCreateRequest.java
+ ┃ ┃   ┃ ┃ ┣ OrderDetailResponse.java
+ ┃ ┃   ┃ ┃ ┣ OrderGroupedResponse.java
+ ┃ ┃   ┃ ┃ ┣ OrderItemDto.java
+ ┃ ┃   ┃ ┃ ┣ OrderItemRequest.java
+ ┃ ┃   ┃ ┃ ┣ OrderItemResponse.java
+ ┃ ┃   ┃ ┃ ┣ OrderPageResponse.java
+ ┃ ┃   ┃ ┃ ┗ OrderResponse.java
+ ┃ ┃   ┃ ┣ entity
+ ┃ ┃   ┃ ┃ ┣ Order.java
+ ┃ ┃   ┃ ┃ ┗ OrderItem.java
+ ┃ ┃   ┃ ┣ enums
+ ┃ ┃   ┃ ┃ ┗ OrderStatus.java
+ ┃ ┃   ┃ ┣ repository
+ ┃ ┃   ┃ ┃ ┗ OrderRepository.java
+ ┃ ┃   ┃ ┗ service
+ ┃ ┃   ┃   ┗ OrderService.java
+ ┃ ┃
+ ┃ ┃   ┣ product
+ ┃ ┃   ┃ ┣ controller
+ ┃ ┃   ┃ ┃ ┗ ProductController.java
+ ┃ ┃   ┃ ┣ dto
+ ┃ ┃   ┃ ┃ ┣ ProductCreateRequest.java
+ ┃ ┃   ┃ ┃ ┣ ProductDetailResponse.java
+ ┃ ┃   ┃ ┃ ┣ ProductListResponse.java
+ ┃ ┃   ┃ ┃ ┣ ProductPageResponse.java
+ ┃ ┃   ┃ ┃ ┣ ProductResponse.java
+ ┃ ┃   ┃ ┃ ┣ ProductUpdateRequest.java
+ ┃ ┃   ┃ ┃ ┗ ProductUpdateStatusRequest.java
+ ┃ ┃   ┃ ┣ entity
+ ┃ ┃   ┃ ┃ ┗ Product.java
+ ┃ ┃   ┃ ┣ enums
+ ┃ ┃   ┃ ┃ ┗ ProductStatus.java
+ ┃ ┃   ┃ ┣ repository
+ ┃ ┃   ┃ ┃ ┗ ProductRepository.java
+ ┃ ┃   ┃ ┗ service
+ ┃ ┃   ┃   ┗ ProductService.java
 ---
 
 ## ⚙️ 어떻게 작동하는가
