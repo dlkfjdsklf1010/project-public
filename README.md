@@ -132,6 +132,7 @@
 ---
 
 ## 프로젝트 파일 구조
+```plaintext
 src
  ┣ main
  ┃ ┣ java
@@ -243,6 +244,7 @@ src
  ┃ ┃   ┃ ┃ ┗ ProductRepository.java
  ┃ ┃   ┃ ┗ service
  ┃ ┃   ┃   ┗ ProductService.java
+```
 ---
 
 ## ⚙️ 어떻게 작동하는가
