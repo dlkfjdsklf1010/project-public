@@ -1,11 +1,13 @@
 package com.commerceapp.common.init;
 
 import com.commerceapp.admin.entity.Admin;
-import com.commerceapp.admin.enums.AdminRole;
 import com.commerceapp.admin.repository.AdminRepository;
 import com.commerceapp.common.config.PasswordEncoder;
 import com.commerceapp.customer.entity.Customer;
 import com.commerceapp.customer.repository.CustomerRepository;
+import com.commerceapp.order.entity.Order;
+import com.commerceapp.order.entity.OrderItem;
+import com.commerceapp.order.repository.OrderRepository;
 import com.commerceapp.product.entity.Product;
 import com.commerceapp.product.enums.ProductStatus;
 import com.commerceapp.product.repository.ProductRepository;
@@ -22,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-// admin, customer, product 임의 생성
+// admin, customer, product, order 임의 생성
 @Slf4j
 @Component
 @Profile({"local", "test"})
@@ -32,11 +34,17 @@ public class DataInitializer {
     private final AdminRepository adminRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
+    private final OrderRepository orderRepository;
     private final PasswordEncoder passwordEncoder;
 
     @EventListener(ApplicationReadyEvent.class)
-    @Transactional
     public void init() {
+        doInit();
+        log.info("테스트용 admin, customer, product, order 객체를 생성했습니다.");
+    }
+
+    @Transactional
+    public void doInit() {
 
         log.info("데이터 초기화 시작");
 
@@ -52,6 +60,11 @@ public class DataInitializer {
         // 슈퍼 관리자가 만든 상품 생성
         if (productRepository.count() == 0) {
             createProducts(superAdmin);
+        }
+
+        // 주문 생성
+        if (orderRepository.count() == 0) {
+            createOrders(superAdmin);
         }
 
         log.info("데이터 초기화 완료");
@@ -179,5 +192,74 @@ public class DataInitializer {
 
         productRepository.saveAll(products);
         log.info("상품 50개 생성 완료. (랜덤으로 품절, 단종 포함)");
+    }
+
+    // 주문 자동 생성
+    private void createOrders(Admin admin) {
+
+        List<Customer> customers = customerRepository.findAll();
+        List<Product> products = productRepository.findAll();
+
+        Random random = new Random();
+        List<Order> orders = new ArrayList<>();
+
+        String[] cancelReasons = {"고객 변심", "재고 부족", "배송 지연"};
+
+        for (int i = 1; i <= 20; i++) {
+
+            Customer customer = customers.get(random.nextInt(customers.size()));
+
+            Order order = Order.create(
+                    customer,
+                    admin,
+                    generateOrderNumber(i)
+            );
+
+            int itemCount = random.nextInt(3) + 1; // 1~3개 상품
+
+            for (int j = 0; j < itemCount; j++) {
+
+                Product product = products.get(random.nextInt(products.size()));
+                int quantity = random.nextInt(3) + 1;
+
+                // 🔥 재고 감소는 "가능할 때만"
+                if (product.getStatus() == ProductStatus.ON_SALE && product.getStock() >= quantity) {
+                    product.decreateStock(quantity);
+                }
+
+                // 👉 주문은 무조건 생성 (단종/품절 포함)
+                OrderItem orderItem = OrderItem.create(product, quantity);
+                order.addOrderItem(orderItem);
+            }
+
+            // ❗ 상품 없는 주문 제거 (안전장치)
+            if (order.getOrderItemList().isEmpty()) continue;
+
+            // 🔥 상태 랜덤 설정
+            int rand = random.nextInt(10);
+
+            if (rand < 4) {
+                // READY
+            } else if (rand < 7) {
+                order.updateStatus(); // SHIPPING
+            } else if (rand < 9) {
+                order.updateStatus(); // READY → SHIPPING
+                order.updateStatus(); // SHIPPING → COMPLETED
+            } else {
+                String reason = cancelReasons[random.nextInt(cancelReasons.length)];
+                order.cancel(reason); // CANCELED
+            }
+
+            orders.add(order);
+        }
+
+        orderRepository.saveAll(orders);
+
+        log.info("주문 20개 + 상태 랜덤 + 단종/품절 포함 생성 완료");
+    }
+
+    // 주문 번호 생성 메서드
+    private String generateOrderNumber(int i) {
+        return "20260429-" + String.format("%04d", i);
     }
 }

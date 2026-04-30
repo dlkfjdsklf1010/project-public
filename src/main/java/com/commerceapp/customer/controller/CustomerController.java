@@ -1,13 +1,14 @@
 package com.commerceapp.customer.controller;
 
+import com.commerceapp.common.exception.UnauthorizedException;
 import com.commerceapp.customer.dto.*;
-import com.commerceapp.customer.entity.Customer;
 import com.commerceapp.customer.service.CustomerService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.servlet.http.HttpSession;
 
 /**
  * 고객 관리 Controller 클래스
@@ -47,31 +48,31 @@ public class CustomerController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginCustomer(@Valid @RequestBody CustomerLoginRequest request, HttpSession session) {
+    public ResponseEntity<String> login(@Valid @RequestBody CustomerLoginRequest request, HttpServletRequest requestHttp) {
         // 1. 요청 body에서 로그인 데이터 받아오기
         // - @Valid로 유효성 검사 수행 (이메일, 비밀번호)
 
         // 2. Service에 로그인 요청 전달
-        // - 이메일/비밀번호 검증은 Service에서 처리
-        Customer customer = customerService.loginCustomer(request);
+        CustomerLoginSession loginSession = customerService.loginCustomer(request);
 
-        // 3. 세션에 고객 ID 저장
-        // - 이후 요청에서 로그인 여부 확인에 사용
-        session.setAttribute("customer", customer.getId());
+        // 3. 세션에 고객 정보 저장
+        HttpSession session = requestHttp.getSession(true);
+        session.setAttribute("loginCustomer", loginSession);
+        session.setMaxInactiveInterval(864000);
 
         // 4. 로그인 성공 응답 반환 (200 OK)
         return ResponseEntity.status(HttpStatus.OK).body("고객 로그인 성공!");
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logoutCustomer(HttpSession session) {
-        // 1. 세션 무효화
-        // - 세션에 저장된 모든 데이터 삭제
-        // - 이후 요청에서 로그인 여부 확인 시 null 반환
-        session.invalidate();
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
 
-        // 2. 로그아웃 성공 응답 반환 (200 OK)
-        return ResponseEntity.status(HttpStatus.OK).body("고객 로그아웃 성공!");
+        if (session != null) {
+            session.invalidate();
+        }
+
+        return ResponseEntity.ok("성공적으로 로그아웃 되었습니다.");
     }
 
     /**
@@ -97,7 +98,7 @@ public class CustomerController {
 
         // 1. 로그인 여부 확인
         if(session.getAttribute("loginAdmin") == null){
-            throw new IllegalStateException("로그인이 필요합니다.");
+            throw new UnauthorizedException("관리자 로그인이 필요합니다.");
         }
 
         // 2. 쿼리 파라미터로 검색 키워드, 상태 필터, 페이징, 정렬 정보 받아오기
@@ -118,7 +119,7 @@ public class CustomerController {
     public CustomerDetailResponse getCustomer(HttpSession session, @PathVariable Long id) {
         // 1. 로그인 여부 확인
         if (session.getAttribute("loginAdmin") == null) {
-            throw new IllegalStateException("로그인이 필요합니다.");
+            throw new UnauthorizedException("관리자 로그인이 필요합니다.");
         }
 
         // 2. URL에서 고객 ID 추출
@@ -138,7 +139,7 @@ public class CustomerController {
     public CustomerDetailResponse updateCustomer(HttpSession session, @PathVariable Long id, @RequestBody CustomerUpdateRequest request) {
         // 1. 로그인 여부 확인
         if (session.getAttribute("loginAdmin") == null) {
-            throw new IllegalStateException("로그인이 필요합니다.");
+            throw new UnauthorizedException("관리자 로그인이 필요합니다.");
         }
 
         // 2. URL에서 고객 ID 추출
@@ -159,7 +160,7 @@ public class CustomerController {
     public CustomerDetailResponse updateStatus(HttpSession session, @PathVariable Long id, @RequestBody CustomerStatusRequest request) {
         // 1. 로그인 여부 확인
         if (session.getAttribute("loginAdmin") == null) {
-            throw new IllegalStateException("로그인이 필요합니다.");
+            throw new UnauthorizedException("관리자 로그인이 필요합니다.");
         }
 
         // 2. URL에서 고객 ID 추출
@@ -179,7 +180,7 @@ public class CustomerController {
     public CustomerDeleteResponse deleteCustomer(HttpSession session, @PathVariable Long id) {
         // 1. 로그인 여부 확인
         if (session.getAttribute("loginAdmin") == null) {
-            throw new IllegalStateException("로그인이 필요합니다.");
+            throw new UnauthorizedException("관리자 로그인이 필요합니다.");
         }
 
         // 2. URL에서 고객 ID 추출

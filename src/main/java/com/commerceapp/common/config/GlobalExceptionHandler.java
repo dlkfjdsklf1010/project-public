@@ -1,6 +1,8 @@
 package com.commerceapp.common.config;
 
+import com.commerceapp.common.exception.ForbiddenException;
 import com.commerceapp.common.exception.NotFoundException;
+import com.commerceapp.common.exception.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -37,9 +39,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleIllegalStateException(IllegalStateException e){
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
-                .body("상태:" + e.getMessage());
+                .body("상태: " + e.getMessage());
     }
 
+    // enum 잘못 들어갔을 때
     @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
     public ResponseEntity<String> handleHttpMessageNotReadableException(){
         return ResponseEntity
@@ -54,4 +57,19 @@ public class GlobalExceptionHandler {
                 .body("찾을 수 없음: " + e.getMessage());
     }
 
+    // 401 Unauthorized
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<String> handleUnauthorizedException(UnauthorizedException e){
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("인증 오류: " + e.getMessage());
+    }
+
+    // 403 Forbidden
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<String> handleForbidden(ForbiddenException e) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body("권한 없음: " + e.getMessage());
+    }
 }

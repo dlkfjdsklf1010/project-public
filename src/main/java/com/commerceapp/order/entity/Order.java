@@ -35,6 +35,9 @@ public class Order extends BaseEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItemList = new ArrayList<>();
 
+    @Column(name = "total_quantity", nullable = false)
+    private int totalQuantity = 0;
+
     @Column(name = "total_price", nullable = false)
     private int totalPrice = 0;
 
@@ -63,6 +66,7 @@ public class Order extends BaseEntity {
         orderItemList.add(item);
         item.assignOrder(this);
         this.totalPrice += item.getTotalSum();
+        this.totalQuantity += item.getQuantity();
     }
 
     // 상태 변경

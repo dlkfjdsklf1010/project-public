@@ -3,6 +3,10 @@ package com.commerceapp.order.service;
 import com.commerceapp.admin.dto.AdminLoginSession;
 import com.commerceapp.admin.entity.Admin;
 import com.commerceapp.admin.repository.AdminRepository;
+import com.commerceapp.common.exception.ForbiddenException;
+import com.commerceapp.common.exception.NotFoundException;
+import com.commerceapp.common.exception.UnauthorizedException;
+import com.commerceapp.customer.dto.CustomerLoginSession;
 import com.commerceapp.customer.entity.Customer;
 import com.commerceapp.customer.repository.CustomerRepository;
 import com.commerceapp.order.dto.*;
@@ -42,11 +46,17 @@ public class OrderService {
     @Transactional
     public OrderResponse createOrder(OrderCreateRequest request, HttpSession session) {
         if (session == null) {
-            throw new IllegalArgumentException("로그인이 필요합니다.");
+            throw new UnauthorizedException("로그인이 필요합니다.");
         }
 
-        Customer customer = customerRepository.findById(request.getCustomerId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 고객 정보가 없습니다."));
+        CustomerLoginSession loginSession = (CustomerLoginSession) session.getAttribute("loginCustomer");
+
+        if (loginSession == null) {
+            throw new UnauthorizedException("로그인이 필요합니다.");
+        }
+
+        Customer customer = customerRepository.findById(loginSession.getCustomerId())
+                .orElseThrow(() -> new NotFoundException("해당 고객 정보가 없습니다."));
 
         Admin admin = null;
 
@@ -73,7 +83,7 @@ public class OrderService {
         AdminLoginSession loginAdmin = (AdminLoginSession) session.getAttribute("loginAdmin");
 
         if (loginAdmin == null) {
-            throw new IllegalArgumentException("관리자 로그인이 필요합니다.");
+            throw new ForbiddenException("관리자 로그인이 필요합니다.");
         }
 
         Admin admin = adminRepository.findById(loginAdmin.getId())
@@ -98,7 +108,7 @@ public class OrderService {
 
     // 주문 리스트 조회
     @Transactional(readOnly = true)
-    public OrderPageResponse getOrders(
+    public OrderPageResponse getOrderList(
             String keyword,
             int page,
             int size,
@@ -106,10 +116,14 @@ public class OrderService {
             String direction,
             OrderStatus status
     ) {
+        keyword = (keyword == null || keyword.isBlank()) ? null : keyword.trim();
+
+        Sort.Direction dir = Sort.Direction.fromString(direction);
+
         Pageable pageable = PageRequest.of(
                 page - 1,
                 size,
-                Sort.by(Sort.Direction.fromString(direction), sortBy)
+                Sort.by(dir, sortBy)
         );
 
         Page<Order> result = orderRepository.search(keyword, status, pageable);

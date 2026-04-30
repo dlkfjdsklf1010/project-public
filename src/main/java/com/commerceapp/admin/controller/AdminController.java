@@ -93,7 +93,7 @@ public class AdminController {
 
         AdminDetailResponse response = adminService.getAdminDetail(adminId);
 
-        return  ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // 관리자 내 프로필 조회
