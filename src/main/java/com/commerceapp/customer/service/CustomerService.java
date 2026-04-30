@@ -3,6 +3,7 @@ package com.commerceapp.customer.service;
 import com.commerceapp.common.config.PasswordEncoder;
 import com.commerceapp.common.exception.NotFoundException;
 import com.commerceapp.customer.dto.CustomerLoginRequest;
+import com.commerceapp.customer.dto.CustomerLoginSession;
 import com.commerceapp.customer.dto.CustomerSignupRequest;
 import com.commerceapp.customer.entity.Customer;
 import com.commerceapp.customer.repository.CustomerRepository;
@@ -75,7 +76,7 @@ public class CustomerService {
 
         /* 소프트 딜리트된 고객 접근 방어 */
         if (customer.getIsDeleted()) {
-            throw new NotFoundException("삭제 된 고객입니다.");
+            throw new NotFoundException("삭제된 고객입니다.");
         }
 
         return customer;
@@ -149,7 +150,7 @@ public class CustomerService {
     }
 
     @Transactional(readOnly = true)
-    public Customer loginCustomer(CustomerLoginRequest request) {
+    public CustomerLoginSession loginCustomer(CustomerLoginRequest request) {
         // 1. 이메일로 고객 조회
         Customer customer = customerRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다."));
@@ -160,6 +161,6 @@ public class CustomerService {
         }
 
         // 3. 고객 반환
-        return customer;
+        return CustomerLoginSession.from(customer);
     }
 }

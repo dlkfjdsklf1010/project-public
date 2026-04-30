@@ -1,30 +1,28 @@
 package com.commerceapp.product.dto;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
+@JsonPropertyOrder({"page", "size", "productList", "totalProducts", "totalPages"})
 @Getter
 public class ProductPageResponse<T> {
-
-    private List<T> content;
+    private List<T> productList;
     private int page;
     private int size;
     private long totalProducts;
     private int totalPages;
 
-    public ProductPageResponse(List<T> content, int page, int size, long totalProducts, int totalPages) {
-        this.content = content;
+    public ProductPageResponse(List<T> productList, int page, int size, long totalProducts, int totalPages) {
+        this.productList = productList;
         this.page = page;
         this.size = size;
         this.totalProducts = totalProducts;
         this.totalPages = totalPages;
     }
 
-    /**
-     * Page 기능을 사용할 수 있도록 수정
-     */
     public static <T> ProductPageResponse<T> from(Page<T> page) {
         return new ProductPageResponse<>(
                 page.getContent(),

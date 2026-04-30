@@ -92,7 +92,7 @@ public class AdminController {
 
         AdminDetailResponse response = adminService.getAdminDetail(adminId);
 
-        return  ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/me")

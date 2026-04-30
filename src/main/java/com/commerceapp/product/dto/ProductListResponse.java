@@ -3,29 +3,25 @@ package com.commerceapp.product.dto;
 import com.commerceapp.product.entity.Product;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
-@JsonPropertyOrder({"name", "category", "price", "stock", "status", "createdAt", "createdByName", "createdByEmail"})
 @Getter
-public class ProductDetailResponse {
+public class ProductListResponse {
+    private Long id;
     private String name;
-    private String category;
     private int price;
     private int stock;
     private String status;
     private String createdByName;
-    private String createdByEmail;
-    private LocalDateTime createdAt;
 
-    public ProductDetailResponse(Product product) {
+    public ProductListResponse(Product product) {
+        this.id = product.getId();
         this.name = product.getName();
-        this.category = product.getCategory();
         this.price = product.getPrice();
         this.stock = product.getStock();
         this.status = product.getStatus().getDisplayName();
         this.createdByName = product.getAdmin().getName();
-        this.createdByEmail = product.getAdmin().getEmail();
-        this.createdAt = product.getCreatedAt();
     }
 }

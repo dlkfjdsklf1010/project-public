@@ -1,11 +1,21 @@
 package com.commerceapp.product.dto;
 
 import com.commerceapp.product.entity.Product;
-import com.commerceapp.product.enums.ProductStatus;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@JsonPropertyOrder({
+        "id",
+        "name",
+        "category",
+        "price",
+        "stock",
+        "status",
+        "createdAt",
+        "createdByName"
+})
 @Getter
 public class ProductResponse {
     private final Long id;
@@ -13,7 +23,7 @@ public class ProductResponse {
     private final String category;
     private final int price;
     private final int stock;
-    private final ProductStatus status;
+    private final String status;
     private final LocalDateTime createdAt;
     private final String createdByName;
 
@@ -23,7 +33,7 @@ public class ProductResponse {
         this.category = product.getCategory();
         this.price = product.getPrice();
         this.stock = product.getStock();
-        this.status = product.getStatus();
+        this.status = product.getStatus().getDisplayName();
         this.createdAt = product.getCreatedAt();
         this.createdByName = product.getAdmin().getName();
     }

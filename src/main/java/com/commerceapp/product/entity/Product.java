@@ -37,6 +37,9 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "admin_id", nullable = false)
     private Admin admin;
 
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
+
     public Product(String name, String category, int price, int stock, ProductStatus status, Admin admin) {
         this.name = name;
         this.category = category;
@@ -105,5 +108,15 @@ public class Product extends BaseEntity {
         this.name = name;
         this.category = category;
         this.price = price;
+    }
+
+    // 상품 삭제 (소프트 딜리트)
+    public void delete() {
+        this.isDeleted = true;
+    }
+
+    // 상품 상태 업데이트
+    public void updateStatus(ProductStatus status) {
+        this.status = status;
     }
 }

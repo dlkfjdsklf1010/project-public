@@ -1,5 +1,8 @@
 package com.commerceapp.order.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum OrderStatus {
     READY("준비중"),
     SHIPPING("배송중"),

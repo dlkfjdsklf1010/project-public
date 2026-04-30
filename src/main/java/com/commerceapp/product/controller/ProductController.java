@@ -1,89 +1,138 @@
 package com.commerceapp.product.controller;
 
 import com.commerceapp.admin.dto.AdminLoginSession;
+import com.commerceapp.common.exception.NotFoundException;
+import com.commerceapp.common.exception.UnauthorizedException;
 import com.commerceapp.product.dto.*;
+import com.commerceapp.product.entity.Product;
 import com.commerceapp.product.enums.ProductStatus;
+import com.commerceapp.product.repository.ProductRepository;
 import com.commerceapp.product.service.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.swing.text.html.parser.Entity;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/products")
 public class ProductController {
     private final ProductService productService;
+    private final ProductRepository productRepository;
 
     // 상품 등록
     @PostMapping
     public ResponseEntity<ProductDetailResponse> create(
             @RequestBody ProductCreateRequest request,
-            HttpSession session
+            HttpServletRequest httpRequest
     ) {
+        AdminLoginSession loginAdmin = getLoginAdmin(httpRequest);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(request, session));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(productService.create(request, loginAdmin));
     }
 
     // 상품 리스트 조회
     @GetMapping
     public ResponseEntity<ProductPageResponse<ProductResponse>> getProductList(
+            HttpSession session,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) ProductStatus state,
+            @RequestParam(required = false) String state,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction
     ) {
+        if(session.getAttribute("loginAdmin") == null){
+            throw new UnauthorizedException("관리자 로그인이 필요합니다.");
+        }
+
         return ResponseEntity.ok(productService.getProductList(keyword, category, state, page, size, sortBy, direction));
     }
 
-    // 상품 상세 조회
+    // 상품 단건 조회
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductDetailResponse> getProductDetail(@PathVariable Long productId) {
+    public ResponseEntity<ProductDetailResponse> getProductDetail(
+            @PathVariable Long productId,
+            HttpServletRequest request
+    ) {
+        getLoginAdmin(request);
+
         return ResponseEntity.ok(productService.getProductDetail(productId));
     }
 
-    /**
-     * 상품 수정
-     * admin이 로그인했을 때만 수정 가능하도록 코드 수정
-     */
+    // 상품 수정
     @PatchMapping("/{productId}")
-    public void update(@PathVariable Long productId,
-                       @RequestBody ProductUpdateRequest request,
-                       HttpServletRequest requestHttp
+    public ResponseEntity<String> updateProduct(
+            @PathVariable Long productId,
+            @RequestBody ProductUpdateRequest request,
+            HttpServletRequest httpRequest
     ) {
-        HttpSession session = requestHttp.getSession(false);
+        AdminLoginSession loginAdmin = getLoginAdmin(httpRequest);
 
-        AdminLoginSession loginSession = (AdminLoginSession) session.getAttribute("loginAdmin");
-        // 수정할 데이터 꺼내기
         productService.updateProduct(
                 productId,
                 request.getName(),
                 request.getCategory(),
                 request.getPrice(),
-                loginSession
+                loginAdmin
         );
+
+        return ResponseEntity.ok("상품 수정이 완료되었습니다.");
     }
 
-    /**
-     * 상품 삭제
-     * admin이 로그인했을 때만 수정 가능하도록 코드 수정
-     */
+    // 상품 상태 변경
+    @PatchMapping("/status/{productId}")
+    public ResponseEntity<String> updateProductStatus(
+            @PathVariable Long productId,
+            @RequestBody ProductUpdateStatusRequest request,
+            HttpServletRequest httpRequest
+    ) {
+        AdminLoginSession loginAdmin = getLoginAdmin(httpRequest);
+
+        productService.updateProductStatus(
+                productId,
+                request.getStatus(),
+                loginAdmin
+        );
+
+        return ResponseEntity.ok("상품 상태 수정이 완료되었습니다.");
+    }
+
+    // 상품 삭제
     @DeleteMapping("/{productId}")
-    public ResponseEntity<String> delete(@PathVariable Long productId, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+    public ResponseEntity<String> delete(
+            @PathVariable Long productId,
+            HttpServletRequest request
+    ) {
+        AdminLoginSession loginAdmin = getLoginAdmin(request);
+
+        productService.deleteProduct(productId, loginAdmin);
+
+        return ResponseEntity.ok("상품이 삭제되었습니다.");
+    }
+
+    // 관리자가 로그인 했는지 확인
+    private AdminLoginSession getLoginAdmin(HttpServletRequest request) {
+        HttpSession session = request.getSession();
 
         if (session == null) {
-            throw new IllegalStateException("로그인이 필요합니다.");
+            throw new UnauthorizedException("관리자 로그인이 필요합니다.");
         }
 
-        AdminLoginSession loginSession = (AdminLoginSession) session.getAttribute("loginAdmin");
-        productService.delete(productId, loginSession);
+        AdminLoginSession admin =
+                (AdminLoginSession) session.getAttribute("loginAdmin");
 
-        return ResponseEntity.status(HttpStatus.OK).body("상품이 삭제되었습니다.");
+        if (admin == null) {
+            throw new UnauthorizedException("관리자 로그인이 필요합니다.");
+        }
+
+        return admin;
     }
 }

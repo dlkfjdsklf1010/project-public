@@ -1,10 +1,13 @@
 package com.commerceapp.order.controller;
 
 import com.commerceapp.admin.dto.AdminLoginSession;
+import com.commerceapp.common.exception.UnauthorizedException;
 import com.commerceapp.order.dto.*;
 import com.commerceapp.order.enums.OrderStatus;
 import com.commerceapp.order.service.OrderService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +20,8 @@ public class OrderController {
 
     // 고객 주문 생성
     @PostMapping
-    public ResponseEntity<OrderResponse> createOrder(
-            @RequestBody OrderCreateRequest request,
+    public ResponseEntity<OrderResponse> createOrderbyUser(
+            @Valid @RequestBody OrderCreateRequest request,
             HttpSession session
     ) {
         return ResponseEntity.ok(orderService.createOrder(request, session));
@@ -41,11 +44,25 @@ public class OrderController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction,
-            @RequestParam(required = false) OrderStatus status
+            @RequestParam(required = false) OrderStatus status,
+            HttpServletRequest request
     ) {
-        return ResponseEntity.ok(
-                orderService.getOrders(keyword, page, size, sortBy, direction, status)
-        );
+       HttpSession session = request.getSession(false);
+
+       if (session == null) {
+           throw new UnauthorizedException("관리자 로그인이 필요합니다.");
+       }
+
+       AdminLoginSession loginSession = (AdminLoginSession) session.getAttribute("loginAdmin");
+
+       if (loginSession == null) {
+           throw new UnauthorizedException("관리자 로그인이 필요합니다.");
+       }
+
+       OrderPageResponse response = orderService.getOrderList(
+               keyword, page, size, sortBy, direction, status);
+
+        return ResponseEntity.ok(response);
     }
 
     // 주문 상세 조회
@@ -56,26 +73,26 @@ public class OrderController {
 
     // 주문 상태 변경
     @PatchMapping("/{orderId}/status")
-    public ResponseEntity<Void> updateStatus(
+    public ResponseEntity<String> updateStatus(
             @PathVariable Long orderId,
             @SessionAttribute(name = "loginAdmin", required = false) AdminLoginSession adminSession
     ) {
         if (adminSession == null) {
-            throw new IllegalArgumentException("관리자 로그인이 필요합니다.");
+            throw new UnauthorizedException("관리자 로그인이 필요합니다.");
         }
         orderService.updateStatus(orderId, adminSession);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("주문 상태 변경이 완료되었습니다.");
     }
 
     // 주문 취소
     @PatchMapping("/{orderId}/cancel")
-    public ResponseEntity<Void> cancelOrder(
+    public ResponseEntity<String> cancelOrder(
             @PathVariable Long orderId,
             @RequestBody String reason
     ) {
         orderService.cancelOrder(orderId, reason);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("주문이 취소되었습니다.");
     }
 }

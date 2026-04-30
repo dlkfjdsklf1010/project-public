@@ -1,7 +1,6 @@
 package com.commerceapp.order.dto;
 
 import com.commerceapp.order.entity.Order;
-import com.commerceapp.order.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 
@@ -12,7 +11,7 @@ import java.util.List;
         "orderNumber",
         "customerName",
         "customerEmail",
-        "items",
+        "itemList",
         "totalPrice",
         "createdAt",
         "status",
@@ -33,7 +32,7 @@ public class OrderDetailResponse {
     private String adminRole;
 
     private int totalPrice;
-    private OrderStatus status;
+    private String status;
     private LocalDateTime createdAt;
 
     private List<OrderItemResponse> itemList;
@@ -51,7 +50,7 @@ public class OrderDetailResponse {
         }
 
         this.totalPrice = order.getTotalPrice();
-        this.status = order.getStatus();
+        this.status = order.getStatus().getDisplayName();
         this.createdAt = order.getCreatedAt();
 
         this.itemList = order.getOrderItemList().stream()
