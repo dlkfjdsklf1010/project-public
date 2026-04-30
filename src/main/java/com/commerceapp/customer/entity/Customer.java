@@ -1,4 +1,5 @@
 package com.commerceapp.customer.entity;
+import com.commerceapp.customer.enums.CustomerStatus;
 
 import com.commerceapp.common.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -37,8 +38,9 @@ public class Customer extends BaseEntity {
     @Pattern(regexp = "^010-\\d{4}-\\d{4}$") /* 010-XXXX-XXXX 형식 유효성 검증 */
     private String phoneNumber; /* 전화번호 */
 
+    @Enumerated(EnumType.STRING) /* Enum을 문자열로 DB에 저장 */
     @Column(nullable = false, length = 20) /* NOT NULL, 최대 20자 */
-    private  String status; /* 상태 (ACTIVE/INACTIVE/SUSPENDED) */
+    private CustomerStatus status; /* 상태 (ACTIVE/INACTIVE/SUSPENDED) */
 
     @Column(nullable = false) /* NOT NULL */
     private Boolean isDeleted = false; /* 소프트 딜리트 여부 (기본값: false) */
@@ -54,7 +56,7 @@ public class Customer extends BaseEntity {
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
-        this.status = "ACTIVE"; /* 신규 고객 기본 상태 */
+        this.status = CustomerStatus.ACTIVE; /* ← String → Enum */
     }
 
     /*========== 기능 ===========*/
@@ -73,9 +75,9 @@ public class Customer extends BaseEntity {
      * 고객 상태 변경
      * 상태값: ACTIVE(활성), INACTIVE(비활성), SUSPENDED(정지)
      */
-    public void updateStatus(String status) {
+    public void updateStatus(CustomerStatus status) {
         this.status = status;
-    }
+    } //수정
 
     /**
      * 고객 소프트 딜리트
@@ -89,12 +91,19 @@ public class Customer extends BaseEntity {
      * 더미 데이터 생성용 정적 팩토리 메서드
      * DataInitializer에서 테스트 데이터 생성 시 사용
      */
-    public static Customer create(String name, String email, String password, String phoneNumber, String status) {
+    public static Customer createCustomer(
+            String name,
+            String email,
+            String password,
+            String phoneNumber,
+            String status
+    ) {
         Customer customer = new Customer();
         customer.name = name;
         customer.email = email;
         customer.password = password;
         customer.phoneNumber = phoneNumber;
+        customer.status = CustomerStatus.ACTIVE;
         customer.status = status;
 
         return customer;

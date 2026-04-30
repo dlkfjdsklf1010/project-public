@@ -20,12 +20,12 @@ public class CustomerDetailResponse {
     private LocalDateTime createdAt; /* 가입일 */
 
     /* Customer 엔티티를 받아 필요한 필드만 DTO에 담음 */
-    public CustomerDetailResponse(Customer customers) {
-        this.id = customers.getId();
-        this.name = customers.getName();
-        this.email = customers.getEmail();
-        this.phoneNumber = customers.getPhoneNumber();
-        this.status = customers.getStatus();
-        this.createdAt = customers.getCreatedAt();
+    public CustomerDetailResponse(Customer customer) {
+        this.id = customer.getId();
+        this.name = customer.getName();
+        this.email = customer.getEmail();
+        this.phoneNumber = customer.getPhoneNumber();
+        this.status = customer.getStatus().name();
+        this.createdAt = customer.getCreatedAt();
     }
 }

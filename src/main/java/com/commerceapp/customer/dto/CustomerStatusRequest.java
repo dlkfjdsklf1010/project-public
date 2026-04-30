@@ -1,4 +1,5 @@
 package com.commerceapp.customer.dto;
+import com.commerceapp.customer.enums.CustomerStatus;
 
 import lombok.Getter;
 
@@ -9,5 +10,5 @@ import lombok.Getter;
  */
 @Getter
 public class CustomerStatusRequest {
-    private String status; /* 변경할 상태값 */
+    private CustomerStatus status; /* 변경할 상태값 */
 }

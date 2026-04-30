@@ -1,5 +1,6 @@
 package com.commerceapp.customer.repository;
 
+import com.commerceapp.customer.enums.CustomerStatus;
 import com.commerceapp.customer.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +37,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @return 페이징된 고객 목록
      */
     @Query("SELECT c FROM Customer c WHERE (c.name LIKE %:keyword% OR c.email LIKE %:keyword%) AND (:status IS NULL OR c.status = :status) AND c.isDeleted = false ")
-    Page<Customer> findByKeywordAndStatus(@Param("keyword") String keyword, @Param("status") String status, Pageable pageable);
+    Page<Customer> findByKeywordAndStatus(@Param("keyword") String keyword, @Param("status") CustomerStatus status, Pageable pageable);
 
     /**
      * 이메일로 고객 조회

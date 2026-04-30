@@ -6,7 +6,6 @@ import com.commerceapp.customer.service.CustomerService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,19 +32,26 @@ public class CustomerController {
 
     /*========== 기능 ===========*/
 
-    @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@Valid @RequestBody CustomerSignupRequest request) {
-        // 1. 요청 body에서 회원가입 데이터 받아오기
-        // 2. Service에 회원가입 요청 전달
-        customerService.signupCustomer(request);
 
-        // 3. 회원가입 성공 응답 반환
-        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.");
+    @PostMapping("/signup")
+    public ResponseEntity<String> signUpCustomer(@Valid @RequestBody CustomerSignupRequest request) {
+        // 1. 요청 body에서 회원가입 데이터 받아오기
+        // - @Valid로 유효성 검사 수행 (이름, 이메일, 비밀번호, 전화번호)
+        // - 유효성 검사 실패 시 400 에러 반환
+
+        // 2. Service에 회원가입 요청 전달
+        // - 이메일 중복 확인 및 비밀번호 암호화는 Service에서 처리
+        customerService.signUpCustomer(request);
+
+        // 3. 회원가입 성공 응답 반환 (201 Created)
+        return ResponseEntity.status(HttpStatus.CREATED).body("고객 회원가입이 완료되었습니다.");
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@Valid @RequestBody CustomerLoginRequest request, HttpServletRequest requestHttp) {
         // 1. 요청 body에서 로그인 데이터 받아오기
+        // - @Valid로 유효성 검사 수행 (이메일, 비밀번호)
+
         // 2. Service에 로그인 요청 전달
         CustomerLoginSession loginSession = customerService.loginCustomer(request);
 
@@ -54,8 +60,8 @@ public class CustomerController {
         session.setAttribute("loginCustomer", loginSession);
         session.setMaxInactiveInterval(864000);
 
-        // 4. 로그인 성공 응답 반환
-        return ResponseEntity.status(HttpStatus.OK).body("로그인 성공!");
+        // 4. 로그인 성공 응답 반환 (200 OK)
+        return ResponseEntity.status(HttpStatus.OK).body("고객 로그인 성공!");
     }
 
     @PostMapping("/logout")
@@ -81,7 +87,7 @@ public class CustomerController {
      * @return 페이징된 고객 목록
      */
     @GetMapping
-    public Page<CustomerListResponse> getCustomerList(
+    public CustomerPageResponse getCustomerList (
             HttpSession session,
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "") String status,
@@ -98,8 +104,10 @@ public class CustomerController {
         // 2. 쿼리 파라미터로 검색 키워드, 상태 필터, 페이징, 정렬 정보 받아오기
         // 3. Service에 조회 요청 전달
         // 4. 조회된 고객 목록을 CustomerListResponse DTO로 변환하여 반환
-        return customerService.getCustomerList(keyword, status, page, size, sortBy, sortOrder)
-                .map(CustomerListResponse::new);
+        return new CustomerPageResponse(
+        customerService.getCustomerList(keyword, status, page, size, sortBy, sortOrder)
+                .map(CustomerListResponse::from)
+        );
     }
 
     /**

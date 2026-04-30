@@ -19,12 +19,24 @@ public class CustomerListResponse {
     private LocalDateTime createdAt; /* 가입일 */
 
     /* Customer 엔티티를 받아 필요한 필드만 DTO에 담음 */
-    public CustomerListResponse(Customer customer) {
-        this.id = customer.getId();
-        this.name = customer.getName();
-        this.email = customer.getEmail();
-        this.phoneNumber = customer.getPhoneNumber();
-        this.status = customer.getStatus();
-        this.createdAt = customer.getCreatedAt();
+    public CustomerListResponse(Long id, String name, String email, String phoneNumber, String status, LocalDateTime createdAt) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.status = status;
+        this.createdAt = createdAt;
+    }
+
+    public static CustomerListResponse from(Customer customer) {
+        return new CustomerListResponse(
+                customer.getId(),
+                customer.getName(),
+                customer.getEmail(),
+                customer.getPhoneNumber(),
+                customer.getStatus().name(),
+                customer.getCreatedAt()
+        );
     }
 }
+

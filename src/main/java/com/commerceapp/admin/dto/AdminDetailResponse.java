@@ -29,12 +29,14 @@ public class AdminDetailResponse {
     }
 
     public static AdminDetailResponse from(Admin admin){
+        String displayRole = admin.getRole().getDisplayName();
+        String displayStatus = admin.getStatus().getDisplayName();
         return new AdminDetailResponse(
                 admin.getName(),
                 admin.getEmail(),
                 admin.getPhoneNumber(),
-                admin.getRole(),
-                admin.getStatus(),
+                displayRole,
+                displayStatus,
                 admin.getCreatedAt(),
                 admin.getApprovedAt()
         );
