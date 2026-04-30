@@ -19,8 +19,8 @@
 
 ## 👨‍🏫 프로젝트 소개
 
-이 프로젝트는 **커머스 환경에서 주문을 생성하고 관리하는 백엔드 API 시스템**입니다.
-고객과 관리자가 각각 주문을 생성할 수 있으며, 주문 상태 변경 및 취소 기능을 포함합니다.
+
+
 
 ---
 
@@ -36,19 +36,19 @@
 
 ## 프로젝트 계기
 
-커머스 서비스의 핵심인 **주문 처리 흐름**을 직접 구현하면서
-실제 서비스에서 사용하는 **비즈니스 로직과 데이터 구조를 이해하기 위해 개발**하였습니다.
+
+
 
 ---
 
-## 💜 주요기능
+## 주요기능
 
-* 고객 주문 생성
-* 관리자(CS) 주문 생성
-* 주문 리스트 조회 (페이징, 정렬, 검색, 상태 필터)
-* 주문 상세 조회
-* 주문 상태 변경 (READY → SHIPPING → COMPLETED)
-* 주문 취소 및 재고 복구
+* 
+* 
+* 
+* 
+* 
+* 
 
 ---
 
@@ -106,12 +106,12 @@
 
 주요 API:
 
-* POST /api/orders → 고객 주문 생성
-* POST /api/orders/admin → 관리자 주문 생성
-* GET /api/orders → 주문 리스트 조회
-* GET /api/orders/{orderId} → 주문 상세 조회
-* PATCH /api/orders/{orderId}/status → 상태 변경
-* PATCH /api/orders/{orderId}/cancel → 주문 취소
+*
+* 
+* 
+* 
+* 
+*
 
 ---
 
@@ -133,20 +133,6 @@
 
 ## 프로젝트 파일 구조
 
-```
-com.commerceapp
- ┣ admin
- ┣ customer
- ┣ product
- ┣ order
- ┃ ┣ controller
- ┃ ┣ service
- ┃ ┣ repository
- ┃ ┣ entity
- ┃ ┣ dto
- ┃ ┗ enums
- ┗ common
-```
 
 ---
 
